@@ -13,15 +13,14 @@ function generateFakeAnswers(correct) {
   }
 
   while (fakeAnswers.length < 3) {
-    // Nếu là số → tạo sai số xung quanh
     if (!isNaN(correct)) {
+      // Nếu là số
       let num = Number(correct);
       for (let i = 1; i <= 3; i++) {
         fakeAnswers.push(randomAround(num));
       }
     } else if (typeof correct === "string") {
-      // Nếu là chuỗi, ví dụ "Chiều dài 9 m, chiều rộng 4 m"
-      // Thay đổi số trong chuỗi để tạo đáp án sai
+      // Nếu là chuỗi
       let match = correct.match(/\d+/g);
       if (match) {
         match.forEach((numStr) => {
@@ -50,8 +49,13 @@ const Contest = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [contest, setContest] = useState(null);
-  const [answers, setAnswers] = useState({}); // lưu đáp án HS chọn
+  const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [currentQIndex, setCurrentQIndex] = useState(0);
+
+  // Theo dõi thời gian làm bài
+  const [questionStartTime, setQuestionStartTime] = useState(Date.now());
+  const [timePerQuestion, setTimePerQuestion] = useState({});
 
   useEffect(() => {
     const fetchContest = async () => {
@@ -59,7 +63,6 @@ const Contest = () => {
         const res = await axiosInstance.get(`/get-contest/${id}`);
         let contestData = res.data;
 
-        // Chuẩn bị options cho mỗi câu hỏi
         contestData.questions = contestData.questions.map((q) => {
           const correctAnswer = q.answer;
           const fakeAnswers = generateFakeAnswers(correctAnswer);
@@ -76,6 +79,21 @@ const Contest = () => {
     fetchContest();
   }, [id]);
 
+  // Cập nhật thời gian khi chuyển câu hỏi
+  const handleChangeQuestion = (newIndex) => {
+    const now = Date.now();
+    const currentQ = contest.questions[currentQIndex];
+    const timeSpent = Math.floor((now - questionStartTime) / 1000); // giây
+
+    setTimePerQuestion((prev) => ({
+      ...prev,
+      [currentQ.id]: (prev[currentQ.id] || 0) + timeSpent,
+    }));
+
+    setCurrentQIndex(newIndex);
+    setQuestionStartTime(Date.now());
+  };
+
   const handleSelect = (questionId, option) => {
     setAnswers((prev) => ({
       ...prev,
@@ -84,17 +102,27 @@ const Contest = () => {
   };
 
   const handleSubmit = async () => {
+    const now = Date.now();
+    const lastQ = contest.questions[currentQIndex];
+    const timeSpent = Math.floor((now - questionStartTime) / 1000);
+
+    const finalTimePerQuestion = {
+      ...timePerQuestion,
+      [lastQ.id]: (timePerQuestion[lastQ.id] || 0) + timeSpent,
+    };
+
     setSubmitted(true);
 
     if (!contest) return;
 
-    // Chuẩn bị dữ liệu kết quả để gửi về backend
     const resultData = {
       ...contest,
-      userId: "12345", // Thay bằng ID người dùng hiện tại
+      userId: "12345", // Thay bằng ID người dùng
       questions: contest.questions.map((q) => ({
         ...q,
-        answers: answers[q.id] === q.answer ? "correct" : "incorrect",
+        selected: answers[q.id] || null,
+        result: answers[q.id] === q.answer ? "correct" : "incorrect",
+        time: finalTimePerQuestion[q.id] || 0,
       })),
     };
 
@@ -108,60 +136,75 @@ const Contest = () => {
 
   if (!contest) return <p>Đang tải đề thi...</p>;
 
+  const currentQuestion = contest.questions[currentQIndex];
+
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold">{contest.name}</h1>
+    <div className="p-4 max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">{contest.name}</h1>
 
-      {contest.questions.map((q, index) => (
-        <div key={q.id} className="my-4 p-4 border rounded-lg">
-          <p className="font-semibold">
-            Câu {index + 1}: {q.content}
-          </p>
-
-          <div className="mt-2 space-y-2">
-            {q.options.map((opt, i) => (
-              <label key={i} className="block">
-                <input
-                  type="radio"
-                  name={`q-${q.id}`}
-                  value={opt}
-                  checked={answers[q.id] === opt}
-                  onChange={() => handleSelect(q.id, opt)}
-                  disabled={submitted}
-                />
-                <span className="ml-2">{opt}</span>
-              </label>
-            ))}
-          </div>
-
-          {submitted && (
-            <p
-              className={`mt-2 font-medium ${
-                answers[q.id] === q.answer
-                  ? "text-green-600"
-                  : "text-red-600"
-              }`}
-            >
-              {answers[q.id] === q.answer
-                ? "✅ Chính xác"
-                : `❌ Sai, đáp án đúng: ${q.answer}`}
-            </p>
-          )}
-        </div>
-      ))}
-
-      {!submitted ? (
-        <button
-          onClick={handleSubmit}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-        >
-          Nộp bài
-        </button>
-      ) : (
-        <p className="mt-4 text-lg font-bold text-purple-600">
-          Bạn đã nộp bài!
+      <div key={currentQuestion.id} className="p-4 border rounded-lg">
+        <p className="font-semibold mb-2">
+          Câu {currentQIndex + 1}: {currentQuestion.content}
         </p>
-      )}
+
+        <div className="space-y-2">
+          {currentQuestion.options.map((opt, i) => (
+            <label key={i} className="block">
+              <input
+                type="radio"
+                name={`q-${currentQuestion.id}`}
+                value={opt}
+                checked={answers[currentQuestion.id] === opt}
+                onChange={() => handleSelect(currentQuestion.id, opt)}
+                disabled={submitted}
+              />
+              <span className="ml-2">{opt}</span>
+            </label>
+          ))}
+        </div>
+
+        {submitted && (
+          <p
+            className={`mt-2 font-medium ${
+              answers[currentQuestion.id] === currentQuestion.answer
+                ? "text-green-600"
+                : "text-red-600"
+            }`}
+          >
+            {answers[currentQuestion.id] === currentQuestion.answer
+              ? "✅ Chính xác"
+              : `❌ Sai, đáp án đúng: ${currentQuestion.answer}`}
+          </p>
+        )}
+      </div>
+
+      {/* Nút điều hướng câu hỏi */}
+      <div className="flex justify-between mt-4">
+        <button
+          disabled={currentQIndex === 0}
+          onClick={() => handleChangeQuestion(currentQIndex - 1)}
+          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+        >
+          Câu trước
+        </button>
+        {currentQIndex < contest.questions.length - 1 ? (
+          <button
+            onClick={() => handleChangeQuestion(currentQIndex + 1)}
+            className="px-4 py-2 bg-blue-600 text-white rounded"
+          >
+            Câu tiếp
+          </button>
+        ) : !submitted ? (
+          <button
+            onClick={handleSubmit}
+            className="px-4 py-2 bg-green-600 text-white rounded"
+          >
+            Nộp bài
+          </button>
+        ) : (
+          <p className="text-lg font-bold text-purple-600">Bạn đã nộp bài!</p>
+        )}
+      </div>
     </div>
   );
 };
