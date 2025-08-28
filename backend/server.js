@@ -101,7 +101,7 @@ app.get("/get-contest/:id", async (req, res) => {
     if (contest.questions && contest.questions.length > 0) {
       // Query bảng questions theo list id
       const { data: qs, error: qErr } = await supabase
-        .from("questions")
+        .from("questions3")
         .select("*")
         .in("id", contest.questions);
 
@@ -144,6 +144,62 @@ app.post("/contest-result/:id", async (req, res) => {
   }
 });
 
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .single();
+
+    if (error || !data) {
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    if (data.password !== password) {
+      return res.status(400).json({ error: "Incorrect password" });
+    }
+
+    res.json({ message: "Login successful", user: data });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.post("/signup", async (req, res) => {
+  const { name, email, password } = req.body;
+
+  try {
+    const { data: existingUser, error: fetchError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .single();
+
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (existingUser) {
+      return res.status(400).json({ error: "Email already in use" });
+    }
+
+    const { data, error: insertError } = await supabase
+      .from("users")
+      .insert([{ name, email, password }])
+      .select();
+
+    if (insertError) {
+      return res.status(500).json({ error: "Failed to create user" });
+    }
+
+    res.status(201).json({ message: "User created successfully", user: data[0] });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 // app.post("/add-questions", async (req, res) => {
 //   try{
