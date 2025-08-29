@@ -45,7 +45,7 @@ import axiosInstance from "../../utils/axiosInsantce";
 //   return array.sort(() => Math.random() - 0.5);
 // }
 
-const Contest = () => {
+const Contest = (userInfo) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [contest, setContest] = useState(null);
@@ -56,6 +56,8 @@ const Contest = () => {
   // Theo dõi thời gian làm bài
   const [questionStartTime, setQuestionStartTime] = useState(Date.now());
   const [timePerQuestion, setTimePerQuestion] = useState({});
+
+  // console.log("User Info in Contest:", userInfo.userInfo.id);
 
   useEffect(() => {
     const fetchContest = async () => {
@@ -115,7 +117,7 @@ const Contest = () => {
   const resultData = {
     contestId: contest.id, // Chỉ lấy id để gửi thay vì spread toàn contest
     name: contest.name,
-    userId: "12345", // Thay bằng ID người dùng
+    userId: userInfo.userInfo.id, // Thay bằng ID người dùng
     questions: contest.questions.map((q) => {
       const { vector, ...qWithoutVector } = q; // Bỏ vector
       return {

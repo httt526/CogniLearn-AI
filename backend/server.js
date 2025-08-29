@@ -3,7 +3,6 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const supabase = require('./config/db');
-
 const app = express();
 
 // Middleware to handle CORS
@@ -101,7 +100,7 @@ app.get("/get-contest/:id", async (req, res) => {
     if (contest.questions && contest.questions.length > 0) {
       // Query bảng questions theo list id
       const { data: qs, error: qErr } = await supabase
-        .from("questions3")
+        .from("questions")
         .select("*")
         .in("id", contest.questions);
 
@@ -144,71 +143,83 @@ app.post("/contest-result/:id", async (req, res) => {
   }
 });
 
+app.post("/signup", async (req, res) => {
+  const { name, email, password, role } = req.body;
+
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { name, role }, // user_metadata
+      },
+    });
+  
+    if (error) return res.status(400).json({ error: error.message });
+
+    res.status(201).json({
+      message: "User registered successfully",
+      user: data.user, // user.user_metadata sẽ chứa name, role
+      session: data.session,
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
+// ---------------- LOGIN ----------------
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const { data, error } = await supabase
-      .from("users")
-      .select("*")
-      .eq("email", email)
-      .single();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    if (error || !data) {
-      return res.status(400).json({ error: "User not found" });
-    }
+    if (error) return res.status(400).json({ error: error.message });
 
-    if (data.password !== password) {
-      return res.status(400).json({ error: "Incorrect password" });
-    }
-
-    res.json({ message: "Login successful", user: data });
+    res.json({
+      message: "Login successful",
+      user: data.user,
+      session: data.session, // session chứa access_token, refresh_token
+    });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
 });
 
-app.post("/signup", async (req, res) => {
-  const { name, email, password } = req.body;
-
+app.get("/get-profile", async (req, res) => {
   try {
-    const { data: existingUser, error: fetchError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("email", email)
-      .single();
+    // Lấy token từ header Authorization
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Missing or invalid token" });
+    }
+    const token = authHeader.split(" ")[1];
 
-    if (fetchError && fetchError.code !== 'PGRST116') {
-      return res.status(500).json({ error: "Database error" });
+    // Xác thực user bằng token
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) {
+      return res.status(401).json({ error: "Invalid token" });
     }
 
-    if (existingUser) {
-      return res.status(400).json({ error: "Email already in use" });
-    }
-
-    const { data, error: insertError } = await supabase
-      .from("users")
-      .insert([{ name, email, password }])
-      .select();
-
-    if (insertError) {
-      return res.status(500).json({ error: "Failed to create user" });
-    }
-
-    res.status(201).json({ message: "User created successfully", user: data[0] });
+    // Trả về user metadata luôn (name, role)
+    res.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.user_metadata?.name,
+        role: user.user_metadata?.role,
+      },
+    });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 });
 
-// app.post("/add-questions", async (req, res) => {
-//   try{
-    
-//   }catch(err) {
-//     console.error("Error adding questions:", err.message);
-//     res.status(500).json({ error: "Server error" });
-//   }
-// });
 
 // Serve uploads folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads"), {}));

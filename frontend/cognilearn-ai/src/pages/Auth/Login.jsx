@@ -11,21 +11,27 @@ const Login = () => {
   const [error, setError] = useState('');
 
   const handleLogin = async (e) => {
-    try{
-      const res = await axiosInstance.post('/login', { email, password });
-      if(res.data.user){
-        localStorage.setItem('user', JSON.stringify(res.data.user));
-        navigate('/dashboard');
-      }
-    }catch(err){
-      console.log(err);
-      setError(err.response?.data?.error || 'Login failed');
+  try {
+    const res = await axiosInstance.post('/login', { email, password });
+    if (res.data?.session?.access_token) {
+      localStorage.setItem('token', res.data.session.access_token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+      navigate('/dashboard');
+    } else {
+      setError('Login failed: No token returned');
     }
-  };
+  } catch (err) {
+    console.error(err);
+    setError(err.response?.data?.error || 'Login failed');
+  }
+};
 
   useEffect(() => {
-  
-  }, []);
+    const user = localStorage.getItem('user');
+      if (user) {
+        navigate('/dashboard');
+      }
+  }, [navigate]);
 
   return (
     <>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
@@ -10,8 +10,22 @@ import InterviewPrep from './pages/Interview/InterviewPrep';
 import Contest from './pages/Contest/Contest';
 import CreateContest from './pages/Contest/CreateContest';
 import ContestResult from './pages/Contest/ContestResult';
+import PrivateRoute from './components/PrivateRoute';
+import axiosInstance from './utils/axiosInsantce';
 
 const App = () => {
+  const [userInfo, SetUserInfo] = useState(null);
+
+  useEffect(() => {
+    const getprofile = async () => {
+      const token = localStorage.getItem("token");
+      const res = await axiosInstance.get("/get-profile", {
+        headers: { Authorization: `Bearer ${token}` },
+        });
+        SetUserInfo(res.data.user);
+    };
+    getprofile();
+  }, []);
   return (
     <div>
       <Router>
@@ -20,10 +34,17 @@ const App = () => {
           <Route path="/interview-prep/:sessionId" element={<InterviewPrep/>}/>        
           <Route path="/login" element={<Login/>}/>
           <Route path="/signup" element={<Signup/>}/>
-          <Route path="/dashboard" element={<DashBoard/>}/>
-          <Route path="/contest/:id" element={<Contest/>}/>
+          <Route path="/contest/:id" element={<Contest userInfo = {userInfo}/>}/>
           <Route path="/create-contest" element={<CreateContest/>}/>
           <Route path="/contest-result/:id" element={<ContestResult/>}/>
+          <Route
+            path="/dashboard"
+            element={
+            <PrivateRoute>
+              <DashBoard />
+            </PrivateRoute>
+          }
+        />
         </Routes>
       </Router>
       <Toaster
