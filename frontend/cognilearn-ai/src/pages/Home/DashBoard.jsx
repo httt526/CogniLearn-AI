@@ -1,8 +1,9 @@
 import React from 'react'
+import { AiFillCaretRight } from 'react-icons/ai';
 
 const DashBoard = () => {
   return (
-    <div>DashBoard</div>
+    <><div>DashBoard</div><AiFillCaretRight style={{ color: "112D4E" }} /></>
   )
 }
 
