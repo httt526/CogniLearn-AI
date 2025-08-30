@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInsantce';
+import toast from 'react-hot-toast';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -14,10 +15,9 @@ const SignUp = () => {
   try {
     const res = await axiosInstance.post('/signup', { name, email, password, role });
 
-    if (res.data?.session?.access_token) {
-      localStorage.setItem('token', res.data.session.access_token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
-      navigate('/dashboard');
+    if (res.data?.user) {
+      navigate('/login');
+      toast.success('Sign Up successful! Please confirm your email and Login.');
     } else {
       setError('Sign Up failed: No token returned');
     }
