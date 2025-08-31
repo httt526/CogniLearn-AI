@@ -43,21 +43,21 @@ const mockdata = [
   { icon: IconHome2, label: 'Home', path: '/' },
   { icon: IconGauge, label: 'Dashboard', path: '/dashboard' },
   { icon: IconDeviceDesktopAnalytics, label: 'Libary', path: '/libary' },
+  { icon: IconCalendarStats, label: 'Releases' },
   { icon: IconUser, label: 'Account' },
+  { icon: IconFingerprint, label: 'Security' },
   { icon: IconSettings, label: 'Settings' },
 ];
 
-const Dashboard = ({ userInfo }) => {
+const TeacherDashboard = ({ userInfo }) => {
   const location = useLocation();
 
   const links = mockdata.map((link) => (
     <NavbarLink
-      {...link}
       key={link.label}
       icon={link.icon}
       label={link.label}
       path={link.path}
-      onClick={() => setActive(index)}
       active={location.pathname === link.path}
     />
   ));
@@ -83,7 +83,7 @@ const Dashboard = ({ userInfo }) => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <Title order={2} className="text-gray-800">
-              Welcome back, {userInfo?.name + 'Student'} 👋
+              Welcome back, {userInfo?.name + 'Teacher'} 👋
             </Title>
             <Text size="sm" color="dimmed">
               Manage your dashboard and settings here.
@@ -111,4 +111,4 @@ const Dashboard = ({ userInfo }) => {
   );
 };
 
-export default Dashboard;
+export default TeacherDashboard;

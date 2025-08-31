@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import { supabase } from './utils/supabaseClient';
 
 import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/SignUp";
@@ -13,42 +14,65 @@ import ContestResult from './pages/Contest/ContestResult';
 import PrivateRoute from './components/PrivateRoute';
 import axiosInstance from './utils/axiosInsantce';
 import Libary from './pages/Contest/Libary';
+import TeacherDashboard from './pages/Home/TeacherDashBoard';
 
 const App = () => {
   const [userInfo, SetUserInfo] = useState(null);
 
-   const fetchProfile = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    const refreshToken = localStorage.getItem("refresh_token");
-    try {
-      
-      if (!token) {
+   const refreshAccessToken = async () => {
+  const refreshToken = localStorage.getItem("refresh_token");
+  if (!refreshToken) return null;
+
+  const { data, error } = await supabase.auth.refreshSession({
+    refresh_token: refreshToken,
+  });
+
+  if (error || !data?.session?.access_token) {
+    console.error("Refresh token error:", error);
+    return null;
+  }
+
+  const newToken = data.session.access_token;
+  localStorage.setItem("token", newToken);
+  return newToken;
+};
+
+const fetchProfile = useCallback(async () => {
+  let token = localStorage.getItem("token");
+  try {
+    if (!token) {
+      SetUserInfo(null);
+      return;
+    }
+
+    const res = await axiosInstance.get("/get-profile", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    SetUserInfo(res.data.user);
+
+  } catch (err) {
+    if (err.response?.status === 401) {
+      const newToken = await refreshAccessToken();
+      if (!newToken) {
         SetUserInfo(null);
         return;
       }
-      const res = await axiosInstance.get("/get-profile", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      SetUserInfo(res.data.user);
-    } catch (error) {
-      if (err.response?.status === 401 && refreshToken) {
-      // Token hết hạn, gọi Supabase để refresh
-      const { data, error } = await supabase.auth.refreshSession({
-        refresh_token: refreshToken,
-      });
-      if (!error && data?.session?.access_token) {
-        token = data.session.access_token;
-        localStorage.setItem("token", token);
-        // Thử lại
-        const res = await axios.get("/get-profile", {
-          headers: { Authorization: `Bearer ${token}` },
+
+      // Retry request với token mới
+      try {
+        const res = await axiosInstance.get("/get-profile", {
+          headers: { Authorization: `Bearer ${newToken}` },
         });
-        return res.data.user;
+        SetUserInfo(res.data.user);
+      } catch (retryErr) {
+        console.error("Retry fetchProfile failed:", retryErr);
+        SetUserInfo(null);
       }
+    } else {
+      SetUserInfo(null);
     }
-    else {SetUserInfo(null);}
-    }
-  }, []);
+  }
+}, []);
 
   useEffect(() => {
     fetchProfile();
@@ -77,7 +101,7 @@ const App = () => {
             path="/dashboard"
             element={
             <PrivateRoute>
-              <DashBoard userInfo={userInfo}/>
+              {userInfo?.role ===  "student" ? (<DashBoard userInfo={userInfo}/>) : (<TeacherDashboard userInfo={userInfo}/>)}
             </PrivateRoute>
           }
         />
