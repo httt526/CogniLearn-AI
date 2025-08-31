@@ -28,14 +28,16 @@ function NavbarLink({ icon: Icon, label, active, onClick, path }) {
   };
 
   return (
-    <UnstyledButton
-      onClick={handleClick}
-      className={`${classes.link} ${active ? classes.active : ''}`}
-      data-active={active || undefined}
-    >
-      <Icon size={20} stroke={1.5} />
-      <span className={classes.label}>{label}</span>
-    </UnstyledButton>
+    <Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
+      <UnstyledButton
+        onClick={handleClick}
+        className={classes.link} // Áp dụng class chính
+        data-active={active || undefined} // Áp dụng data attribute để kích hoạt style
+      >
+        <Icon size={20} stroke={1.5} />
+        <span className={classes.label}>{label}</span>
+      </UnstyledButton>
+    </Tooltip>
   );
 }
 
@@ -57,7 +59,6 @@ const Dashboard = ({ userInfo }) => {
       icon={link.icon}
       label={link.label}
       path={link.path}
-      onClick={() => setActive(index)}
       active={location.pathname === link.path}
     />
   ));
