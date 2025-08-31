@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInsantce';
 
-const Login = () => {
+const Login = (fetchProfile) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -16,6 +16,7 @@ const Login = () => {
     if (res.data?.session?.access_token) {
       localStorage.setItem('token', res.data.session.access_token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
+      await fetchProfile();
       navigate('/dashboard');
     } else {
       setError('Login failed: No token returned');

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
@@ -16,15 +16,33 @@ import axiosInstance from './utils/axiosInsantce';
 const App = () => {
   const [userInfo, SetUserInfo] = useState(null);
 
-  useEffect(() => {
-    const getprofile = async () => {
+   const fetchProfile = useCallback(async () => {
+    try {
       const token = localStorage.getItem("token");
+      if (!token) {
+        SetUserInfo(null);
+        return;
+      }
       const res = await axiosInstance.get("/get-profile", {
         headers: { Authorization: `Bearer ${token}` },
-        });
-        SetUserInfo(res.data.user);
+      });
+      SetUserInfo(res.data.user);
+    } catch (error) {
+      console.error("Fetch profile failed:", error);
+      SetUserInfo(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchProfile();
+    const handleStorageChange = () => {
+      fetchProfile();
     };
-    getprofile();
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
   return (
     <div>
@@ -32,8 +50,8 @@ const App = () => {
         <Routes>
           <Route path="/" element={<LandingPage/>}/>
           <Route path="/interview-prep/:sessionId" element={<InterviewPrep/>}/>        
-          <Route path="/login" element={<Login/>}/>
-          <Route path="/signup" element={<Signup/>}/>
+          <Route path="/login" element={<Login fetchProfile = {fetchProfile}/>}/>
+          <Route path="/signup" element={<Signup fetchProfile = {fetchProfile}/>}/>
           <Route path="/contest/:id" element={<Contest userInfo = {userInfo}/>}/>
           <Route path="/create-contest" element={<CreateContest/>}/>
           <Route path="/contest-result/:id" element={<ContestResult/>}/>
@@ -41,7 +59,7 @@ const App = () => {
             path="/dashboard"
             element={
             <PrivateRoute>
-              <DashBoard />
+              <DashBoard userInfo={userInfo}/>
             </PrivateRoute>
           }
         />
