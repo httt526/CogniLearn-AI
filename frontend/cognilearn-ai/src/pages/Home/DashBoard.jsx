@@ -72,7 +72,22 @@ const Dashboard = ({ userInfo }) => {
             <NavbarLink icon={IconLogout} label="Logout" />
           </Stack>
         </nav>
-      ) : <div>Teacher.</div>}
+      ) : <nav className={classes.navbar}>
+          <Center>
+            <MantineLogo type="mark" size={30} />
+          </Center>
+
+          <div className={classes.navbarMain}>
+            <Stack justify="center" gap={0}>
+              {links}
+            </Stack>
+          </div>
+
+          <Stack justify="center" gap={0}>
+            <NavbarLink icon={IconSwitchHorizontal} label="Change account" />
+            <NavbarLink icon={IconLogout} label="Logout" />
+          </Stack>
+        </nav>}
     </div>
   );
 };
