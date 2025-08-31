@@ -6,6 +6,7 @@ import {
   IconFingerprint,
   IconGauge,
   IconHome2,
+  IconLibrary,
   IconLogout,
   IconSettings,
   IconSwitchHorizontal,
@@ -30,7 +31,7 @@ function NavbarLink({ icon: Icon, label, active, onClick, path }) {
   return (
     <UnstyledButton
       onClick={handleClick}
-      className={`${classes.link} ${active ? classes.active : ''}`}
+      className={classes.link}
       data-active={active || undefined}
     >
       <Icon size={20} stroke={1.5} />
@@ -40,9 +41,8 @@ function NavbarLink({ icon: Icon, label, active, onClick, path }) {
 }
 
 const mockdata = [
-  { icon: IconHome2, label: 'Home', path: '/' },
-  { icon: IconGauge, label: 'Dashboard', path: '/dashboard' },
-  { icon: IconDeviceDesktopAnalytics, label: 'Libary', path: '/libary' },
+  { icon: IconHome2, label: 'Dashboard', path: '/dashboard' },
+  { icon: IconLibrary, label: 'Libary', path: '/libary' },
   { icon: IconCalendarStats, label: 'Releases' },
   { icon: IconUser, label: 'Account' },
   { icon: IconFingerprint, label: 'Security' },

@@ -8,7 +8,7 @@ const LandingPage = () => {
   const [openAuthModal, setOpenAuthModal] = useState(false);
   const [currentPage, setCurrentPage] = useState('login');
 
-  const handleCTA = () => {};
+  const handleCTA = () => { navigate('/dashboard'); };
 
   return (
     <div className="w-full min-h-full bg-[#eff4ff]">
@@ -44,7 +44,7 @@ const LandingPage = () => {
             <p className="text-[17px] text-blue-950 mr-0 md:mr-20 mb-6">
               Không chỉ chấm điểm, CogniLearn AI đo lường và phân tích cách bạn suy nghĩ để thiết kế lộ trình học và nghề nghiệp chuẩn xác – dành riêng cho bạn.
             </p>
-            <button className="bg-blue-950 text-sm font-semibold text-white px-7 py-2.5 rounded-full hover:bg-blue-400 hover:text-black" onClick={handleCTA}>
+            <button className="bg-blue-950 text-sm font-semibold text-white px-7 py-2.5 rounded-full hover:bg-blue-400 hover:text-black cursor-pointer" onClick={handleCTA}>
               TÌM HIỂU NGAY
             </button> 
           </div>

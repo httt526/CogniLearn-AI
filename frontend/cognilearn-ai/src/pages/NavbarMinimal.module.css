@@ -6,6 +6,7 @@
   flex-direction: column;
   border-right: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
   box-sizing: border-box; /* Đảm bảo padding không làm tăng kích thước */
+  background-color: #112D4E;
 }
 
 .navbarMain {
@@ -20,27 +21,33 @@
   padding: 0 16px;
   border-radius: var(--mantine-radius-md);
   display: flex;
-  align-items: center; /* 🔹 Căn giữa icon và text */
-  justify-content: flex-start; /* 🔹 Text thẳng hàng với icon */
-  gap: 12px; /* 🔹 Khoảng cách icon - text */
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  color: white;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
-
-  &:hover {
-    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-5));
-  }
-
-  &[data-active] {
-    &,
-    &:hover {
-      background-color: var(--mantine-color-blue-light);
-      color: var(--mantine-color-blue-light-color);
-    }
-  }
 }
+
+/* Hover */
+.link:hover {
+  background-color: #C6E7FF;
+  color: #0367B0;
+}
+
+/* Active */
+.link[data-active] {
+  background-color: #C6E7FF;
+  color: #0367B0;
+}
+
+.link[data-active]:hover {
+  background-color: #0367B0;
+  color: #C6E7FF;
+}
+
 
 .label {
   flex: none;
