@@ -1,10 +1,10 @@
 import React from 'react'
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInsantce';
 
-const Login = (fetchProfile) => {
+const Login = ({fetchProfile}) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

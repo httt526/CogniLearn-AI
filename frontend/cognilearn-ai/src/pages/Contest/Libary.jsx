@@ -40,7 +40,7 @@ const mockdata = [
   { icon: IconSettings, label: 'Settings' },
 ];
 
-const Dashboard = ({ userInfo }) => {
+const Libary = ({ userInfo }) => {
   const location = useLocation(); // 🟢 lấy path hiện tại
 
   const links = mockdata.map((link) => (
@@ -77,4 +77,4 @@ const Dashboard = ({ userInfo }) => {
   );
 };
 
-export default Dashboard;
+export default Libary;

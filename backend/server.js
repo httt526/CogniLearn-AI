@@ -154,7 +154,9 @@ app.post("/signup", async (req, res) => {
         data: { name, role }, // user_metadata
       },
     });
-  
+    
+    await supabase.from('profiles').insert([{id: data.user.id, name, role}]);
+
     if (error) return res.status(400).json({ error: error.message });
 
     res.status(201).json({

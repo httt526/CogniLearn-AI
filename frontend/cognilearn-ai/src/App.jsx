@@ -12,6 +12,7 @@ import CreateContest from './pages/Contest/CreateContest';
 import ContestResult from './pages/Contest/ContestResult';
 import PrivateRoute from './components/PrivateRoute';
 import axiosInstance from './utils/axiosInsantce';
+import Libary from './pages/Contest/Libary';
 
 const App = () => {
   const [userInfo, SetUserInfo] = useState(null);
@@ -55,6 +56,7 @@ const App = () => {
           <Route path="/contest/:id" element={<Contest userInfo = {userInfo}/>}/>
           <Route path="/create-contest" element={<CreateContest/>}/>
           <Route path="/contest-result/:id" element={<ContestResult/>}/>
+          <Route path="/libary" element={<PrivateRoute><Libary userInfo={userInfo}/></PrivateRoute>}/>
           <Route
             path="/dashboard"
             element={
