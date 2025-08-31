@@ -24,6 +24,7 @@
     "@mantine/spotlight": "^8.2.7",
     "@mantine/tiptap": "^8.2.7",
     "@mantinex/mantine-logo": "^2.0.0",
+    "@supabase/supabase-js": "^2.56.1",
     "@tabler/icons-react": "^3.34.1",
     "@tailwindcss/vite": "^4.1.11",
     "@tiptap/extension-link": "^3.3.0",

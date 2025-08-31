@@ -49,7 +49,7 @@ const mockdata = [
   { icon: IconSettings, label: 'Settings' },
 ];
 
-const Dashboard = ({ userInfo }) => {
+const TeacherDashboard = ({ userInfo }) => {
   const location = useLocation();
 
   const links = mockdata.map((link) => (
@@ -83,7 +83,7 @@ const Dashboard = ({ userInfo }) => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <Title order={2} className="text-gray-800">
-              Welcome back, {userInfo?.name + 'Student'} 👋
+              Welcome back, {userInfo?.name + 'Teacher'} 👋
             </Title>
             <Text size="sm" color="dimmed">
               Manage your dashboard and settings here.
@@ -111,4 +111,4 @@ const Dashboard = ({ userInfo }) => {
   );
 };
 
-export default Dashboard;
+export default TeacherDashboard;
