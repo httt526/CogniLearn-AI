@@ -28,14 +28,16 @@ function NavbarLink({ icon: Icon, label, active, onClick, path }) {
   };
 
   return (
-    <UnstyledButton
-      onClick={handleClick}
-      className={`${classes.link} ${active ? classes.active : ''}`}
-      data-active={active || undefined}
-    >
-      <Icon size={20} stroke={1.5} />
-      <span className={classes.label}>{label}</span>
-    </UnstyledButton>
+    <Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
+      <UnstyledButton
+        onClick={handleClick}
+        className={classes.link} // Áp dụng class chính
+        data-active={active || undefined} // Áp dụng data attribute để kích hoạt style
+      >
+        <Icon size={20} stroke={1.5} />
+        <span className={classes.label}>{label}</span>
+      </UnstyledButton>
+    </Tooltip>
   );
 }
 
@@ -43,9 +45,7 @@ const mockdata = [
   { icon: IconHome2, label: 'Home', path: '/' },
   { icon: IconGauge, label: 'Dashboard', path: '/dashboard' },
   { icon: IconDeviceDesktopAnalytics, label: 'Libary', path: '/libary' },
-  { icon: IconCalendarStats, label: 'Releases' },
   { icon: IconUser, label: 'Account' },
-  { icon: IconFingerprint, label: 'Security' },
   { icon: IconSettings, label: 'Settings' },
 ];
 
@@ -54,6 +54,7 @@ const Dashboard = ({ userInfo }) => {
 
   const links = mockdata.map((link) => (
     <NavbarLink
+      {...link}
       key={link.label}
       icon={link.icon}
       label={link.label}

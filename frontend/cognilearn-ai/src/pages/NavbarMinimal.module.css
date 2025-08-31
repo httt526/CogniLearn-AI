@@ -1,18 +1,18 @@
 .navbar {
-  width: 200px; /* Giữ cố định chiều rộng */
-  height: 100vh; /* Chiếm toàn bộ chiều cao màn hình */
+  width: 200px;
+  height: 100vh;
   padding: var(--mantine-spacing-md);
   display: flex;
   flex-direction: column;
   border-right: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
-  box-sizing: border-box; /* Đảm bảo padding không làm tăng kích thước */
+  box-sizing: border-box;
   background-color: #112D4E;
 }
 
 .navbarMain {
   flex: 1;
   margin-top: 50px;
-  overflow-y: auto; /* Cho phép scroll nếu nội dung nhiều */
+  overflow-y: auto;
 }
 
 .link {
@@ -27,36 +27,37 @@
   color: white;
   font-size: 14px;
   font-weight: 500;
+  background-color: #112D4E;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-/* Hover */
+/* Hiệu ứng hover cho tất cả các link */
 .link:hover {
   background-color: #C6E7FF;
-  color: #0367B0;
+  color: #112D4E;
 }
 
-/* Active */
-.link[data-active] {
+/* Style cho link đang active */
+.link[data-active='true'] {
   background-color: #C6E7FF;
-  color: #0367B0;
+  color: #112D4E;
 }
 
-.link[data-active]:hover {
-  background-color: #0367B0;
-  color: #C6E7FF;
+/* Hiệu ứng hover cho link đang active (tùy chọn) */
+.link[data-active='true']:hover {
+  background-color: #C6E7FF;
+  color: #112D4E;
 }
-
 
 .label {
   flex: none;
   white-space: nowrap;
 }
-/* Responsive cho màn hình nhỏ */
+
 @media (max-width: 768px) {
   .navbar {
-    width: 60px; /* Nhỏ hơn trên màn hình mobile */
+    width: 60px;
     padding: var(--mantine-spacing-sm);
   }
 

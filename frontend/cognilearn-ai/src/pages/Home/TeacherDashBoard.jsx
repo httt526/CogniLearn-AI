@@ -8,6 +8,7 @@ import {
   IconHome2,
   IconLibrary,
   IconLogout,
+  IconNotification,
   IconSettings,
   IconSwitchHorizontal,
   IconUser,
@@ -41,12 +42,11 @@ function NavbarLink({ icon: Icon, label, active, onClick, path }) {
 }
 
 const mockdata = [
-  { icon: IconHome2, label: 'Dashboard', path: '/dashboard' },
-  { icon: IconLibrary, label: 'Libary', path: '/libary' },
-  { icon: IconCalendarStats, label: 'Releases' },
-  { icon: IconUser, label: 'Account' },
-  { icon: IconFingerprint, label: 'Security' },
-  { icon: IconSettings, label: 'Settings' },
+  { icon: IconHome2, label: 'Trang chủ', path: '/dashboard' },
+  { icon: IconLibrary, label: 'Thư viện', path: '/libary' },
+  { icon: IconNotification, label: 'Thông Báo' },
+  { icon: IconUser, label: 'Tài khoản' },
+  { icon: IconSettings, label: 'Thiết lập' },
 ];
 
 const TeacherDashboard = ({ userInfo }) => {
@@ -73,8 +73,7 @@ const TeacherDashboard = ({ userInfo }) => {
         </div>
 
         <Stack justify="center" gap={0}>
-          <NavbarLink icon={IconSwitchHorizontal} label="Change account" />
-          <NavbarLink icon={IconLogout} label="Logout" onClick={handleLogout} />
+          <NavbarLink icon={IconLogout} label="Đăng xuất" onClick={handleLogout} />
         </Stack>
       </nav>
 
