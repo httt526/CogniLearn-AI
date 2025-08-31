@@ -34,21 +34,22 @@ const mockdata = [
   { icon: IconHome2, label: 'Home', path: '/' },
   { icon: IconGauge, label: 'Dashboard', path: '/dashboard' },
   { icon: IconDeviceDesktopAnalytics, label: 'Libary', path: '/libary' },
-  { icon: IconCalendarStats, label: 'Releases' },
   { icon: IconUser, label: 'Account' },
-  { icon: IconFingerprint, label: 'Security' },
   { icon: IconSettings, label: 'Settings' },
 ];
 
 const Dashboard = ({ userInfo }) => {
   const location = useLocation(); // 🟢 lấy path hiện tại
+  const [active, setActive] = useState(2);
 
   const links = mockdata.map((link) => (
     <NavbarLink
+      {...link}
       key={link.label}
       icon={link.icon}
       label={link.label}
       path={link.path}
+      onClick={() => setActive(index)}
       active={location.pathname === link.path}
     />
   ));
@@ -56,38 +57,23 @@ const Dashboard = ({ userInfo }) => {
   return (
     <div className="p-5">
       {userInfo?.role === 'student' ? (
-        <nav className={classes.navbar}>
-          <Center>
-            <MantineLogo type="mark" size={30} />
-          </Center>
+         <nav className={classes.navbar}>
+      <Center>
+        <MantineLogo type="mark" inverted size={30} />
+      </Center>
 
-          <div className={classes.navbarMain}>
-            <Stack justify="center" gap={0}>
-              {links}
-            </Stack>
-          </div>
+      <div className={classes.navbarMain}>
+        <Stack justify="center" gap={0}>
+          {links}
+        </Stack>
+      </div>
 
-          <Stack justify="center" gap={0}>
-            <NavbarLink icon={IconSwitchHorizontal} label="Change account" />
-            <NavbarLink icon={IconLogout} label="Logout" />
-          </Stack>
-        </nav>
-      ) : <nav className={classes.navbar}>
-          <Center>
-            <MantineLogo type="mark" size={30} />
-          </Center>
-
-          <div className={classes.navbarMain}>
-            <Stack justify="center" gap={0}>
-              {links}
-            </Stack>
-          </div>
-
-          <Stack justify="center" gap={0}>
-            <NavbarLink icon={IconSwitchHorizontal} label="Change account" />
-            <NavbarLink icon={IconLogout} label="Logout" />
-          </Stack>
-        </nav>}
+      <Stack justify="center" gap={0}>
+        <NavbarLink icon={IconSwitchHorizontal} label="Change account" />
+        <NavbarLink icon={IconLogout} label="Logout" />
+      </Stack>
+    </nav>
+      ) : null}
     </div>
   );
 };

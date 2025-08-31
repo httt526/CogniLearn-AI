@@ -34,9 +34,7 @@ const mockdata = [
   { icon: IconHome2, label: 'Home', path: '/' },
   { icon: IconGauge, label: 'Dashboard', path: '/dashboard' },
   { icon: IconDeviceDesktopAnalytics, label: 'Libary', path: '/libary' },
-  { icon: IconCalendarStats, label: 'Releases' },
   { icon: IconUser, label: 'Account' },
-  { icon: IconFingerprint, label: 'Security' },
   { icon: IconSettings, label: 'Settings' },
 ];
 
@@ -68,7 +66,6 @@ const Libary = ({ userInfo }) => {
           </div>
 
           <Stack justify="center" gap={0}>
-            <NavbarLink icon={IconSwitchHorizontal} label="Change account" />
             <NavbarLink icon={IconLogout} label="Logout" />
           </Stack>
         </nav>
