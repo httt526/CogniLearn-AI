@@ -1,75 +1,17 @@
-import { useState } from 'react';
-import {
-  IconCalendarStats,
-  IconDeviceDesktopAnalytics,
-  IconFingerprint,
-  IconGauge,
-  IconHome2,
-  IconLogout,
-  IconSettings,
-  IconSwitchHorizontal,
-  IconUser,
-} from '@tabler/icons-react';
-import { Center, Stack, Tooltip, UnstyledButton } from '@mantine/core';
-import { MantineLogo } from '@mantinex/mantine-logo';
-import classes from '../NavbarMinimal.module.css';
-import { useLocation, useNavigate } from 'react-router-dom';
+import Navbar from "../../components/Layouts/Navbar";
 
-function NavbarLink({ icon: Icon, label, active, onClick, path }) {
-  const navigate = useNavigate();
+const Libary = () => {
   return (
-    <Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
-      <UnstyledButton
-        onClick={() => navigate(path)}
-        className={classes.link}
-        data-active={active || undefined}
-      >
-        <Icon size={20} stroke={1.5} />
-      </UnstyledButton>
-    </Tooltip>
-  );
-}
+    <div className="flex h-screen bg-gray-50">
+      {/* 🔹 Sidebar */}
+      <Navbar />
 
-const mockdata = [
-  { icon: IconHome2, label: 'Home', path: '/' },
-  { icon: IconGauge, label: 'Dashboard', path: '/dashboard' },
-  { icon: IconDeviceDesktopAnalytics, label: 'Libary', path: '/libary' },
-  { icon: IconUser, label: 'Account' },
-  { icon: IconSettings, label: 'Settings' },
-];
-
-const Libary = ({ userInfo }) => {
-  const location = useLocation(); // 🟢 lấy path hiện tại
-
-  const links = mockdata.map((link) => (
-    <NavbarLink
-      key={link.label}
-      icon={link.icon}
-      label={link.label}
-      path={link.path}
-      active={location.pathname === link.path}
-    />
-  ));
-
-  return (
-    <div className="p-5">
-      {userInfo?.role === 'student' ? (
-        <nav className={classes.navbar}>
-          <Center>
-            <MantineLogo type="mark" size={30} />
-          </Center>
-
-          <div className={classes.navbarMain}>
-            <Stack justify="center" gap={0}>
-              {links}
-            </Stack>
-          </div>
-
-          <Stack justify="center" gap={0}>
-            <NavbarLink icon={IconLogout} label="Logout" />
-          </Stack>
-        </nav>
-      ) : <div>Teacher.</div>}
+      {/* 🔹 Main Content */}
+      <main className="flex-1 p-6">
+        <div className="flex items-center justify-between mb-6">
+          Libary
+        </div>
+      </main>
     </div>
   );
 };
