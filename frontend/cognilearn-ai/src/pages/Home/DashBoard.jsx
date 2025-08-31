@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { handleLogout } from "../../utils/logout"
 import {
   IconCalendarStats,
   IconDeviceDesktopAnalytics,
@@ -17,10 +18,19 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 function NavbarLink({ icon: Icon, label, active, onClick, path }) {
   const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick(); // 🔹 Nếu có onClick thì gọi hàm
+    } else if (path) {
+      navigate(path); // 🔹 Nếu có path thì navigate
+    }
+  };
+
   return (
     <Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
       <UnstyledButton
-        onClick={() => navigate(path)}
+        onClick={handleClick}
         className={classes.link}
         data-active={active || undefined}
       >
