@@ -18,8 +18,10 @@ const App = () => {
   const [userInfo, SetUserInfo] = useState(null);
 
    const fetchProfile = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    const refreshToken = localStorage.getItem("refresh_token");
     try {
-      const token = localStorage.getItem("token");
+      
       if (!token) {
         SetUserInfo(null);
         return;
@@ -29,8 +31,22 @@ const App = () => {
       });
       SetUserInfo(res.data.user);
     } catch (error) {
-      console.error("Fetch profile failed:", error);
-      SetUserInfo(null);
+      if (err.response?.status === 401 && refreshToken) {
+      // Token hết hạn, gọi Supabase để refresh
+      const { data, error } = await supabase.auth.refreshSession({
+        refresh_token: refreshToken,
+      });
+      if (!error && data?.session?.access_token) {
+        token = data.session.access_token;
+        localStorage.setItem("token", token);
+        // Thử lại
+        const res = await axios.get("/get-profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        return res.data.user;
+      }
+    }
+    else {SetUserInfo(null);}
     }
   }, []);
 

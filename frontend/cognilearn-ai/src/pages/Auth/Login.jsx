@@ -16,6 +16,7 @@ const Login = ({fetchProfile}) => {
     if (res.data?.session?.access_token) {
       localStorage.setItem('token', res.data.session.access_token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
+      localStorage.setItem("refresh_token", res.data.session.refresh_token);
       await fetchProfile();
       navigate('/dashboard');
     } else {

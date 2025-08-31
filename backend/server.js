@@ -222,6 +222,26 @@ app.get("/get-profile", async (req, res) => {
   }
 });
 
+app.post("/logout", async (req, res) => {
+  try {
+    const { access_token } = req.body;
+    if (!access_token) {
+      return res.status(400).json({ error: "Missing access token" });
+    }
+
+    // Gọi Supabase để xoá session
+    const { error } = await supabase.auth.admin.signOut(access_token);
+
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    res.json({ message: "Logged out successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 // Serve uploads folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads"), {}));
