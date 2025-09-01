@@ -125,46 +125,75 @@ app.get("/get-progress/:userId", async (req, res) => {
       return res.status(400).json({ error: "Missing userId" });
     }
 
-    // Lấy bản ghi progress gần nhất của user
-    const { data: progress, error: progressError } = await supabase
+    // Lấy tối đa 3 bản ghi progress gần nhất
+    const { data: progresses, error: progressError } = await supabase
       .from("contest_progress")
       .select("*")
       .eq("userId", userId)
-      .order("updated_at", { ascending: false }) // Lấy mới nhất
-      .limit(1)
-      .single();
+      .order("updated_at", { ascending: false })
+      .limit(3);
 
-    if (progressError && progressError.code !== "PGRST116") { 
-      // PGRST116 = no rows returned
-      throw progressError;
+    if (progressError) throw progressError;
+
+    if (!progresses || progresses.length === 0) {
+      return res.status(200).json({ message: "No progress found", data: [] });
     }
 
-    if (!progress) {
-      return res.status(200).json({ message: "No progress found", data: null });
-    }
+    // Lấy danh sách contestId
+    const contestIds = progresses.map((p) => p.contestId);
 
-    // Lấy thông tin contest
-    const { data: contest, error: contestError } = await supabase
+    // Lấy thông tin contests tương ứng
+    const { data: contests, error: contestError } = await supabase
       .from("contests")
       .select("id, name")
-      .eq("id", progress.contestId)
-      .single();
+      .in("id", contestIds);
 
     if (contestError) throw contestError;
 
+    // Map dữ liệu progress với contest
+    const data = progresses.map((p) => {
+      const contest = contests.find((c) => c.id === p.contestId);
+      return {
+        contestId: contest?.id,
+        contestName: contest?.name,
+        progress: p,
+      };
+    });
+
     return res.json({
-      message: "Progress found",
-      data: {
-        contestId: contest.id,
-        contestName: contest.name,
-        progress: progress
-      }
+      message: "Progresses found",
+      data,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
   }
 });
+
+app.delete("/contest-progress/:id", async (req, res) => {
+  const { id } = req.params; // contestId
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: "Missing userId" });
+  }
+
+  try {
+    const { error } = await supabase
+      .from("contest_progress")
+      .delete()
+      .eq("contestId", id)
+      .eq("userId", userId);
+
+    if (error) throw error;
+
+    res.json({ message: "Progress deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 
 app.post("/contest-result/:id", async (req, res) => {

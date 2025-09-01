@@ -118,55 +118,54 @@ const Contest = ({ userInfo }) => {
 
   // 🔹 Nộp bài
   const handleSubmit = async () => {
-    const now = Date.now();
-    const lastQ = contest.questions[currentQIndex];
-    const timeSpent = Math.floor((now - questionStartTime) / 1000);
+  const now = Date.now();
+  const lastQ = contest.questions[currentQIndex];
+  const timeSpent = Math.floor((now - questionStartTime) / 1000);
 
-    const finalTimePerQuestion = {
-      ...timePerQuestion,
-      [lastQ.id]: (timePerQuestion[lastQ.id] || 0) + timeSpent,
-    };
-
-    setSubmitted(true);
-
-    if (!contest || !userId) return;
-
-    const resultData = {
-      contestId: contest.id,
-      name: contest.name,
-      userId,
-      questions: contest.questions.map((q) => {
-        const { vector, ...qWithoutVector } = q;
-        return {
-          ...qWithoutVector,
-          selected: answers[q.id] || null,
-          result:
-            answers[q.id] !== null
-              ? answers[q.id] === q.correct_answer
-                ? "correct"
-                : "incorrect"
-              : "unanswered",
-          time: finalTimePerQuestion[q.id] || 0,
-        };
-      }),
-    };
-
-    try {
-      await axiosInstance.post(`/contest-result/${id}`, resultData);
-      console.log("Kết quả đã lưu thành công!");
-
-      // 🔹 Reset tiến độ khi đã nộp bài
-      await axiosInstance.post(`/contest-progress/${id}`, {
-        userId,
-        answers: {},
-        currentQIndex: 0,
-        timePerQuestion: {},
-        doneQuestions: [],
-      });
-    } catch (err) {
-      console.error("Lỗi khi lưu kết quả:", err);
-    }
+  const finalTimePerQuestion = {
+    ...timePerQuestion,
+    [lastQ.id]: (timePerQuestion[lastQ.id] || 0) + timeSpent,
   };
+
+  setSubmitted(true);
+
+  if (!contest || !userId) return;
+
+  const resultData = {
+    contestId: contest.id,
+    name: contest.name,
+    userId,
+    questions: contest.questions.map((q) => {
+      const { vector, ...qWithoutVector } = q;
+      return {
+        ...qWithoutVector,
+        selected: answers[q.id] || null,
+        result:
+          answers[q.id] !== null
+            ? answers[q.id] === q.correct_answer
+              ? "correct"
+              : "incorrect"
+            : "unanswered",
+        time: finalTimePerQuestion[q.id] || 0,
+      };
+    }),
+  };
+
+  try {
+    // 🔹 Lưu kết quả
+    await axiosInstance.post(`/contest-result/${id}`, resultData);
+    console.log("Kết quả đã lưu thành công!");
+
+    // 🔹 Xóa tiến trình thay vì reset
+    await axiosInstance.delete(`/contest-progress/${id}`, {
+      data: { userId },
+    });
+    console.log("Tiến trình đã được xóa!");
+  } catch (err) {
+    console.error("Lỗi khi lưu kết quả hoặc xóa tiến trình:", err);
+  }
+};
+
 
   if (!contest) return <p>Đang tải đề thi...</p>;
 
