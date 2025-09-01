@@ -217,7 +217,7 @@ app.get("/contest-progress/:contestId", async (req, res) => {
 // Lưu hoặc cập nhật tiến độ
 app.post("/contest-progress/:contestId", async (req, res) => {
   const { contestId } = req.params;
-  const { userId, answers, currentQIndex, timePerQuestion, totalQuestions } = req.body;
+  const { userId, answers, currentQIndex, timePerQuestion, totalQuestions, doneQuestions } = req.body;
 
   try {
     const { data, error } = await supabase
@@ -229,6 +229,7 @@ app.post("/contest-progress/:contestId", async (req, res) => {
         currentQIndex,
         timePerQuestion,
         totalQuestions,
+        doneQuestions: req.body.doneQuestions,
         updated_at: new Date(),
       }, { onConflict: ["contestId", "userId"] })
        .select("*")

@@ -31,7 +31,7 @@ const Dashboard = ({ userInfo }) => {
 
   const progressPercent = latestProgress
     ? Math.round(
-        (latestProgress.progress.currentQIndex /
+        ((latestProgress.progress.doneQuestions.length || 0) /
           latestProgress.progress.totalQuestions) *
           100
       )
@@ -73,7 +73,7 @@ const Dashboard = ({ userInfo }) => {
                 title={latestProgress.contestName}
                 subtitle="Current Contest"
                 progressPercent={progressPercent}
-                current={latestProgress.progress.currentQIndex}
+                current={latestProgress.progress.doneQuestions.length || 0}
                 total={latestProgress.progress.totalQuestions}
                 onContinue={handleContinue}
               />

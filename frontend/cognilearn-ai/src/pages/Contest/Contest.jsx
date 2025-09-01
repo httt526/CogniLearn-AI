@@ -11,6 +11,7 @@ const Contest = ({ userInfo }) => {
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [questionStartTime, setQuestionStartTime] = useState(Date.now());
   const [timePerQuestion, setTimePerQuestion] = useState({});
+  const [doneQuestions, setDoneQuestions] = useState(new Set());
 
   const userId = userInfo?.id; 
 
@@ -43,6 +44,7 @@ const Contest = ({ userInfo }) => {
           setAnswers(res.data.answers || {});
           setCurrentQIndex(res.data.currentQIndex || 0);
           setTimePerQuestion(res.data.timePerQuestion || {});
+          setDoneQuestions(new Set(res.data.doneQuestions || [])); 
         }
       } catch (err) {
         console.error("Lỗi khi tải tiến độ:", err);
@@ -52,7 +54,7 @@ const Contest = ({ userInfo }) => {
   }, [id, userId]);
 
   // 🔹 Lưu tiến độ lên server
-  const saveProgressToServer = async (updatedAnswers, updatedIndex, updatedTime) => {
+  const saveProgressToServer = async (updatedAnswers, doneQuestions, updatedIndex, updatedTime) => {
     if (!userId || !contest) return;
     try {
       await axiosInstance.post(`/contest-progress/${id}`, {
@@ -61,6 +63,7 @@ const Contest = ({ userInfo }) => {
         currentQIndex: updatedIndex,
         timePerQuestion: updatedTime,
         totalQuestions: contest.questions.length || 0,
+        doneQuestions: Array.from(doneQuestions),
       });
     } catch (err) {
       console.error("Lỗi lưu tiến độ:", err);
@@ -79,23 +82,39 @@ const Contest = ({ userInfo }) => {
       [currentQ.id]: (timePerQuestion[currentQ.id] || 0) + timeSpent,
     };
 
+    console.log(doneQuestions);
+
     setTimePerQuestion(updatedTime);
     setCurrentQIndex(newIndex);
     setQuestionStartTime(Date.now());
 
-    saveProgressToServer(answers, newIndex, updatedTime);
+    saveProgressToServer(answers, doneQuestions, newIndex, updatedTime);
   };
 
   
   const handleSelect = (questionId, option) => {
-    if(!contest) return;
-    const updatedAnswers = {
-      ...answers,
-      [questionId]: option,
-    };
-    setAnswers(updatedAnswers);
-    saveProgressToServer(updatedAnswers, currentQIndex, timePerQuestion);
+  if (!contest) return;
+  console.log("Selected:", questionId, option);
+
+  const updatedAnswers = {
+    ...answers,
+    [questionId]: option,
   };
+  const updatedDoneQuestions = new Set(doneQuestions);
+  updatedDoneQuestions.add(questionId);
+
+  console.log("Done Questions:", updatedDoneQuestions);
+
+  setAnswers(updatedAnswers);
+  setDoneQuestions(updatedDoneQuestions);
+
+  saveProgressToServer(
+    updatedAnswers,
+    updatedDoneQuestions,
+    currentQIndex,
+    timePerQuestion
+  );
+};
 
   // 🔹 Nộp bài
   const handleSubmit = async () => {
@@ -142,6 +161,7 @@ const Contest = ({ userInfo }) => {
         answers: {},
         currentQIndex: 0,
         timePerQuestion: {},
+        doneQuestions: [],
       });
     } catch (err) {
       console.error("Lỗi khi lưu kết quả:", err);
