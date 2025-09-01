@@ -92,20 +92,21 @@ app.get("/get-contest/:id", async (req, res) => {
       .from("contests")
       .select("*")
       .eq("id", id)
-      .single();
-
+      .maybeSingle(); 
     if (contestError) throw contestError;
+    if (!contest) {
+      return res.status(404).json({ error: "Contest không tồn tại" });
+    }
 
     let questions = [];
-    if (contest.questions && contest.questions.length > 0) {
-      // Query bảng questions theo list id
+    if (Array.isArray(contest.questions) && contest.questions.length > 0) {
       const { data: qs, error: qErr } = await supabase
         .from("questions")
         .select("*")
         .in("id", contest.questions);
 
       if (qErr) throw qErr;
-      questions = qs;
+      questions = qs || [];
     }
 
     res.json({ ...contest, questions });
@@ -115,6 +116,56 @@ app.get("/get-contest/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+app.get("/get-progress/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    if (!userId) {
+      return res.status(400).json({ error: "Missing userId" });
+    }
+
+    // Lấy bản ghi progress gần nhất của user
+    const { data: progress, error: progressError } = await supabase
+      .from("contest_progress")
+      .select("*")
+      .eq("userId", userId)
+      .order("updated_at", { ascending: false }) // Lấy mới nhất
+      .limit(1)
+      .single();
+
+    if (progressError && progressError.code !== "PGRST116") { 
+      // PGRST116 = no rows returned
+      throw progressError;
+    }
+
+    if (!progress) {
+      return res.status(200).json({ message: "No progress found", data: null });
+    }
+
+    // Lấy thông tin contest
+    const { data: contest, error: contestError } = await supabase
+      .from("contests")
+      .select("id, name")
+      .eq("id", progress.contestId)
+      .single();
+
+    if (contestError) throw contestError;
+
+    return res.json({
+      message: "Progress found",
+      data: {
+        contestId: contest.id,
+        contestName: contest.name,
+        progress: progress
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 app.post("/contest-result/:id", async (req, res) => {
   try {
@@ -140,6 +191,54 @@ app.post("/contest-result/:id", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Có lỗi khi lưu kết quả" });
+  }
+});
+
+app.get("/contest-progress/:contestId", async (req, res) => {
+  const { contestId } = req.params;
+  const { userId } = req.query;
+
+  try {
+    const { data, error } = await supabase
+      .from("contest_progress")
+      .select("*")
+      .eq("contestId", contestId)
+      .eq("userId", userId)
+      .single();
+
+    if (error && error.code !== "PGRST116") throw error; // PGRST116: No rows found
+    res.json(data || null);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Lưu hoặc cập nhật tiến độ
+app.post("/contest-progress/:contestId", async (req, res) => {
+  const { contestId } = req.params;
+  const { userId, answers, currentQIndex, timePerQuestion, totalQuestions } = req.body;
+
+  try {
+    const { data, error } = await supabase
+      .from("contest_progress")
+      .upsert({
+        contestId,
+        userId,
+        answers,
+        currentQIndex,
+        timePerQuestion,
+        totalQuestions,
+        updated_at: new Date(),
+      }, { onConflict: ["contestId", "userId"] })
+       .select("*")
+       .single();
+
+    if (error) throw error;
+    res.json({ message: "Progress saved", data });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
 });
 
