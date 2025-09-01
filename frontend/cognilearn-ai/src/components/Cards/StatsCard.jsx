@@ -42,7 +42,7 @@ export default function StatsCard({ current, total, onContinue }) {
         <p className="text-sm text-gray-800">
           {current} / {total}
         </p>
-        <Badge size="sm">{total - current} questions left</Badge>
+        <Badge size="sm">còn {total - current} câu</Badge>
       </div>
     </div>
   );
