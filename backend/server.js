@@ -233,7 +233,16 @@ app.post("/logout", async (req, res) => {
     const { error } = await supabase.auth.admin.signOut(access_token);
 
     if (error) {
-      return res.status(400).json({ error: error.message });
+      console.warn("⚠️ Supabase logout error:", error.message);
+      // Nếu token không hợp lệ hoặc đã hết hạn, coi như logout thành công
+      if (
+        error.message.includes("Invalid") ||
+        error.message.includes("expired") ||
+        error.message.includes("not found")
+      ) {
+        return res.json({ message: "Already logged out (token invalid/expired)" });
+      }
+      return res.status(500).json({ error: error.message });
     }
 
     res.json({ message: "Logged out successfully" });

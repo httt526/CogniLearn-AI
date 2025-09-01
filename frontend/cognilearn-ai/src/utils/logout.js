@@ -3,7 +3,7 @@ import axiosInstance from "./axiosInsantce";
 export const handleLogout = async () => {
   const refreshToken = localStorage.getItem("refresh_token");
   try {
-    const token = localStorage.getItem("token");
+    let token = localStorage.getItem("token");
     if (!token) {
       console.warn("No token found. Already logged out?");
       window.location.href = "/login";
@@ -26,7 +26,7 @@ export const handleLogout = async () => {
         refresh_token: refreshToken,
       });
       if (!error && data?.session?.access_token) {
-        token = data.session.access_token;
+        let token = data.session.access_token;
         localStorage.setItem("token", token);
         await axiosInstance.post("/logout", { access_token: token });
         localStorage.removeItem("token");

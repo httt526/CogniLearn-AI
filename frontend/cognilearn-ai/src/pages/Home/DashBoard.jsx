@@ -1,82 +1,15 @@
 import { useState } from 'react';
-import { handleLogout } from "../../utils/logout"
-import {
-  IconCalendarStats,
-  IconDeviceDesktopAnalytics,
-  IconFingerprint,
-  IconGauge,
-  IconHome2,
-  IconLogout,
-  IconSettings,
-  IconSwitchHorizontal,
-  IconUser,
-} from '@tabler/icons-react';
-import { Center, Stack, Tooltip, UnstyledButton, Avatar, Text, Title, Button } from '@mantine/core';
-import { MantineLogo } from '@mantinex/mantine-logo';
-import classes from '../NavbarMinimal.module.css';
-import { useLocation, useNavigate } from 'react-router-dom';
-
-function NavbarLink({ icon: Icon, label, active, onClick, path }) {
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    if (onClick) {
-      onClick();
-    } else if (path) {
-      navigate(path);
-    }
-  };
-
-  return (
-    <Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
-      <UnstyledButton
-        onClick={handleClick}
-        className={classes.link} // Áp dụng class chính
-        data-active={active || undefined} // Áp dụng data attribute để kích hoạt style
-      >
-        <Icon size={20} stroke={1.5} />
-        <span className={classes.label}>{label}</span>
-      </UnstyledButton>
-    </Tooltip>
-  );
-}
-
-const mockdata = [
-  { icon: IconHome2, label: 'Home', path: '/' },
-  { icon: IconGauge, label: 'Dashboard', path: '/dashboard' },
-  { icon: IconDeviceDesktopAnalytics, label: 'Libary', path: '/libary' },
-  { icon: IconUser, label: 'Account' },
-  { icon: IconSettings, label: 'Settings' },
-];
+import Navbar from '../../components/Layouts/Navbar';
+import { Avatar, Button, Text, Title } from '@mantine/core';
 
 const Dashboard = ({ userInfo }) => {
-  const location = useLocation();
 
-  const links = mockdata.map((link) => (
-    <NavbarLink
-      {...link}
-      key={link.label}
-      icon={link.icon}
-      label={link.label}
-      path={link.path}
-      active={location.pathname === link.path}
-    />
-  ));
 
   return (
     <div className="flex h-screen bg-gray-50">
       {/* 🔹 Sidebar (Navbar) */}
-      <nav className={`${classes.navbar} bg-white shadow-md`}>
-        <div className={classes.navbarMain}>
-          <Stack justify="center" gap={0}>
-            {links}
-          </Stack>
-        </div>
-
-        <Stack justify="center" gap={0}>
-          <NavbarLink icon={IconSwitchHorizontal} label="Change account" />
-          <NavbarLink icon={IconLogout} label="Logout" onClick={handleLogout} />
-        </Stack>
+      <nav>
+        <Navbar />
       </nav>
 
       {/* 🔹 Main Content */}

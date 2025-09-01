@@ -33,7 +33,9 @@ const App = () => {
   }
 
   const newToken = data.session.access_token;
+  const newRefreshToken = data.session.refresh_token;
   localStorage.setItem("token", newToken);
+  localStorage.setItem("refresh_token", newRefreshToken);
   return newToken;
 };
 
