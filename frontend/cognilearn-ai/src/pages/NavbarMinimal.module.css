@@ -1,4 +1,7 @@
 .navbar {
+  position: fixed; 
+  top: 0;
+  left: 0;
   width: 200px;
   height: 100vh;
   padding: var(--mantine-spacing-md);
@@ -7,7 +10,9 @@
   border-right: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
   box-sizing: border-box;
   background-color: #112D4E;
+  z-index: 1000; 
 }
+
 
 .navbarMain {
   flex: 1;

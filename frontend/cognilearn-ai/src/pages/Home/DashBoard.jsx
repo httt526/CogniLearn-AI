@@ -43,12 +43,12 @@ const Dashboard = ({ userInfo }) => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-fit bg-gray-50">
       <nav>
         <Navbar />
       </nav>
 
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-6 main-content">
         <div className="flex items-center justify-between mb-6">
           <div>
             <Title order={2} className="text-gray-800">

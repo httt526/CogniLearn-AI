@@ -56,7 +56,7 @@ export default function Navbar() {
   ));
 
   return (
-    <nav className={`${classes.navbar} bg-white shadow-md`}>
+    <nav className={`${classes.navbar} bg-white shadow-md h-fit`}>
       <div className={classes.navbarMain}>
         <Stack justify="center" gap={0}>
           {links}
