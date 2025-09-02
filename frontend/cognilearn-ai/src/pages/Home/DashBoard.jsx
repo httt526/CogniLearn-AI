@@ -7,7 +7,17 @@ import StatsCard from "../../components/Cards/StatsCard";
 
 const Dashboard = ({ userInfo }) => {
   const [latestProgresses, setLatestProgresses] = useState([]);
+  const [latestContests, setLatestContests] = useState([]);
   const navigate = useNavigate();
+
+  const fetchLatestContests = async () => {
+    try {
+      const res = await axiosInstance.get("/get-contests");
+      setLatestContests(res.data || []);
+    } catch (err) {
+      console.error("Lỗi khi lấy các cuộc thi:", err);
+    } 
+  }
 
   useEffect(() => {
     if (!userInfo?.id) return;
@@ -23,6 +33,7 @@ const Dashboard = ({ userInfo }) => {
         }
       })
       .catch((err) => console.error("Lỗi khi lấy progress:", err));
+    fetchLatestContests();
   }, [userInfo]);
 
   const handleContinue = (contestId) => {
@@ -98,10 +109,29 @@ const Dashboard = ({ userInfo }) => {
               </Text>
             </div>
 
-            <div className="bg-white shadow rounded-xl p-4 cursor-pointer hover:shadow-lg transition-shadow duration-300">
-              <Title order={4}>Hành động nhanh</Title>
+            <div className="bg-white shadow rounded-xl p-4">
+            <Title order={4}>Hành động nhanh</Title>
+            <div className="mt-3">
+              {latestContests.length > 0 ? (
+                latestContests.map((contest) => (
+                  <div
+                    key={contest.id}
+                    className="p-2 rounded-md hover:bg-gray-100 cursor-pointer transition"
+                    onClick={() => navigate(`/contest/${contest.id}`)}
+                  >
+                    <Text size="sm" className="text-blue-600 font-medium">
+                      {contest.name}
+                    </Text>
+                  </div>
+                ))
+              ) : (
+                <Text size="sm" color="dimmed">
+                  Không có contest nào
+                </Text>
+              )}
             </div>
           </div>
+        </div>
       </main>
     </div>
   );

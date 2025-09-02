@@ -15,7 +15,7 @@ const Contest = ({ userInfo }) => {
 
   const userId = userInfo?.id; 
 
-  // 🔹 Load đề thi
+  // Load đề thi
   useEffect(() => {
     const fetchContest = async () => {
       try {
@@ -33,7 +33,7 @@ const Contest = ({ userInfo }) => {
     fetchContest();
   }, [id]);
 
-  // 🔹 Lấy tiến độ từ server khi vào lại trang
+  // Lấy tiến độ từ server khi vào lại trang
   useEffect(() => {
     const fetchProgress = async () => {
       try {
@@ -53,7 +53,7 @@ const Contest = ({ userInfo }) => {
     if (userId) fetchProgress();
   }, [id, userId]);
 
-  // 🔹 Lưu tiến độ lên server
+  // Lưu tiến độ lên server
   const saveProgressToServer = async (updatedAnswers, doneQuestions, updatedIndex, updatedTime) => {
     if (!userId || !contest) return;
     try {
@@ -116,7 +116,7 @@ const Contest = ({ userInfo }) => {
   );
 };
 
-  // 🔹 Nộp bài
+  // Nộp bài
   const handleSubmit = async () => {
   const now = Date.now();
   const lastQ = contest.questions[currentQIndex];
@@ -152,11 +152,11 @@ const Contest = ({ userInfo }) => {
   };
 
   try {
-    // 🔹 Lưu kết quả
+    // Lưu kết quả
     await axiosInstance.post(`/contest-result/${id}`, resultData);
     console.log("Kết quả đã lưu thành công!");
 
-    // 🔹 Xóa tiến trình thay vì reset
+    // Xóa tiến trình thay vì reset
     await axiosInstance.delete(`/contest-progress/${id}`, {
       data: { userId },
     });
@@ -236,7 +236,17 @@ const Contest = ({ userInfo }) => {
             Nộp bài
           </button>
         ) : (
-          <p className="text-lg font-bold text-purple-600">Bạn đã nộp bài!</p>
+          <div>
+            <p className="text-lg font-bold text-purple-600">Bạn đã nộp bài!</p>
+            {submitted && (
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="px-4 py-2 bg-purple-600 text-white rounded"
+              >
+                Quay về Trang chủ
+              </button>
+            )}
+          </div>
         )}
       </div>
     </div>

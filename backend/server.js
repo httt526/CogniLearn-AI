@@ -117,6 +117,24 @@ app.get("/get-contest/:id", async (req, res) => {
   }
 });
 
+app.get("/get-contests", async (req, res) => {
+  try {
+    const { data: contests, error } = await supabase
+      .from("contests")
+      .select("id, name")
+      .order("created_at", { ascending: false }) 
+      .limit(3); 
+
+    if (error) throw error;
+
+    res.json(contests);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 app.get("/get-progress/:userId", async (req, res) => {
   const { userId } = req.params;
 
