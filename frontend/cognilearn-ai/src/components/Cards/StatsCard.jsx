@@ -1,7 +1,7 @@
 import { IconMath } from '@tabler/icons-react';
 import { Badge, Progress } from '@mantine/core';
 
-export default function StatsCard({ current, total, onContinue }) {
+export default function StatsCard({ title, current, total, onContinue }) {
   const progress = total > 0 ? (current / total) * 100 : 0;
 
   return (
@@ -23,7 +23,7 @@ export default function StatsCard({ current, total, onContinue }) {
 
       {/* Progress */}
       <div className="flex justify-between text-gray-500 text-sm mt-4">
-        <span>Progress</span>
+        <span>{title}</span>
         <span>{Math.round(progress)}%</span>
       </div>
 
