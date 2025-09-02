@@ -5,7 +5,7 @@ const Setting = () => {
   return (
     <div className='flex h-screen bg-gray-50'>  
     <Navbar/>
-    <main className='flex-1 p-6'>Setting</main>
+    <main className='flex-1 p-6 main-content'>Setting</main>
     </div>
   )
 }

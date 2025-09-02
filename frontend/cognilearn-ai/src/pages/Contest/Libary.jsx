@@ -7,7 +7,7 @@ const Libary = () => {
       <Navbar />
 
       {/* 🔹 Main Content */}
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-6 main-content">
         <div className="flex items-center justify-between mb-6">
           Libary
         </div>
