@@ -37,9 +37,9 @@ function NavbarLink({ icon: Icon, label, active, onClick, path }) {
 const mockdata = [
   { icon: IconHome2, label: 'Trang chủ', path: '/dashboard' },
   { icon: IconLibrary, label: 'Thư viện', path: '/libary' },
-  { icon: IconNotification, label: 'Thông Báo' },
-  { icon: IconUser, label: 'Tài khoản' },
-  { icon: IconSettings, label: 'Thiết lập' },
+  { icon: IconNotification, label: 'Thông Báo', path: '/notifications' },
+  { icon: IconUser, label: 'Tài khoản', path: '/profile' },
+  { icon: IconSettings, label: 'Thiết lập', path: '/settings' },
 ];
 
 export default function Navbar() {

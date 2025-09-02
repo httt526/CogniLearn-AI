@@ -15,6 +15,9 @@ import PrivateRoute from './components/PrivateRoute';
 import axiosInstance from './utils/axiosInsantce';
 import Libary from './pages/Contest/Libary';
 import TeacherDashboard from './pages/Home/TeacherDashBoard';
+import UserProfile from './pages/Account/UserProfile';
+import Setting from './pages/Setting/Setting';
+import Notifications from './pages/Home/Notifications';
 
 const App = () => {
   const [userInfo, SetUserInfo] = useState(null);
@@ -99,6 +102,17 @@ const fetchProfile = useCallback(async () => {
           <Route path="/create-contest" element={<CreateContest/>}/>
           <Route path="/contest-result/:id" element={<ContestResult/>}/>
           <Route path="/libary" element={<PrivateRoute><Libary userInfo={userInfo}/></PrivateRoute>}/>
+          <Route path="/settings" element={<PrivateRoute><Setting userInfo={userInfo}/></PrivateRoute>}/>
+          <Route path="/notifications" element={<PrivateRoute><Notifications userInfo={userInfo}/></PrivateRoute>}/>
+          <Route
+            path="/profile"
+            element={
+            <PrivateRoute>
+              {<UserProfile userInfo={userInfo}/>}
+            </PrivateRoute>
+          }
+        />
+
           <Route
             path="/dashboard"
             element={

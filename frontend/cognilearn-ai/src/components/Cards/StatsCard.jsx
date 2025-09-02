@@ -6,7 +6,7 @@ export default function StatsCard({ current, total, onContinue }) {
 
   return (
     <div
-      className="bg-white shadow rounded-2xl p-6 border border-gray-200 mt-5 cursor-pointer hover:shadow-lg transition-shadow duration-300"
+      className="bg-white shadow rounded-2xl p-6 border border-gray-200 mt-5 cursor-pointer"
       onClick={onContinue}
     >
       {/* Icon */}
