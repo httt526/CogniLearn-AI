@@ -1,4 +1,4 @@
-import { IconMath } from '@tabler/icons-react';
+import { BsBookHalf } from 'react-icons/bs';
 import { Badge, Progress } from '@mantine/core';
 
 export default function StatsCard({ title, current, total, onContinue }) {
@@ -11,8 +11,8 @@ export default function StatsCard({ title, current, total, onContinue }) {
     >
       {/* Icon */}
       <div className="flex justify-center mb-4">
-        <div className="bg-blue-100 text-blue-600 rounded-full w-16 h-16 flex items-center justify-center">
-          <IconMath size={32} stroke={1.5} />
+        <div className="bg-[#C6E7FF] text-[#0367B0] rounded-full w-16 h-16 flex items-center justify-center">
+          <BsBookHalf size={32} stroke={1.5} />
         </div>
       </div>
 
@@ -42,7 +42,7 @@ export default function StatsCard({ title, current, total, onContinue }) {
         <p className="text-sm text-gray-800">
           {current} / {total}
         </p>
-        <Badge size="sm">còn {total - current} câu</Badge>
+        <Badge color="#0367B0" size="sm">còn {total - current} câu</Badge>
       </div>
     </div>
   );

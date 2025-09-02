@@ -4,6 +4,11 @@ import Navbar from "../../components/Layouts/Navbar";
 import { Avatar, Text, Title } from "@mantine/core";
 import axiosInstance from "../../utils/axiosInsantce";
 import StatsCard from "../../components/Cards/StatsCard";
+import classes from '../../pages/NavbarMinimal.module.css';
+import { Button, Progress, rgba, useMantineTheme } from '@mantine/core';
+import { useInterval } from '@mantine/hooks';
+import classesProgress from '../ButtonProgress.module.css';
+import { PopUpModal } from "../../components/Modal/Popup.jsx";
 
 const Dashboard = ({ userInfo }) => {
   const [latestProgresses, setLatestProgresses] = useState([]);
@@ -42,32 +47,89 @@ const Dashboard = ({ userInfo }) => {
     }
   };
 
-  return (
-    <div className="flex h-fit bg-gray-50">
-      <nav>
-        <Navbar />
-      </nav>
+  const theme = useMantineTheme();
+  const [progress, setProgress] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+  const [modalOpened, setModalOpened] = useState(false);
 
-      <main className="flex-1 p-6 main-content">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <Title order={2} className="text-gray-800">
-              Welcome back, {userInfo?.name || "Student"} 👋
-            </Title>
-            <Text size="sm" color="dimmed">
-              Manage your dashboard and settings here.
-            </Text>
+  const interval = useInterval(
+    () =>
+      setProgress((current) => {
+        if (current < 100) {
+          return current + 1;
+        }
+
+        interval.stop();
+        setLoaded(true);
+        return 0;
+      }),
+    20
+  );
+  useEffect(() => {
+    if (loaded) {
+      setModalOpened(true);
+    }
+  }, [loaded]);
+
+  const handleCloseModal = () => {
+    setModalOpened(false);
+  };
+
+  return (
+    <>
+      <div className="flex h-fit bg-gray-50 ml-20 mr-20 mt-5 mb-5">
+        <nav>
+          <Navbar />
+        </nav>
+
+        <main className="flex-1 p-6 main-content">
+          <div className="flex items-center justify-between">
+            <div>
+              <Title order={2} className="text-gray-800">
+                Welcome back, {userInfo?.name || "Khách"} 👋
+              </Title>
+            </div>
+            <div className="flex items-center space-x-4 gap-4">
+              <Text size="sm" color="dimmed">
+                {userInfo?.name || "Khách"}
+              </Text>
+              <Avatar
+                src={userInfo?.avatar || ""}
+                alt="User Avatar"
+                radius="xl"
+                size="lg"
+                className="cursor-pointer hover:opacity-80 transition"
+                onClick={() => navigate("/profile")} />
+            </div>
           </div>
-          <Avatar
-            src={userInfo?.avatar || ""}
-            alt="User Avatar"
-            radius="xl"
-            size="lg"
-            className="cursor-pointer hover:opacity-80 transition duration-200 text-[#0367B0] mr-80"
-            onClick={() => navigate("/profile")}
-          />
-        </div>
-          <div className="grid grid-cols-1 gap-6 ml-auto w-full max-w-md mr-80">
+
+          <div className={`${classes.toolBar} grid grid-cols-1 gap-6 ml-auto w-full max-w-md mb-5`}>
+            <div style={{ padding: '20px' }} className="bg-white shadow rounded-xl p-4 cursor-pointer hover:shadow-lg transition-shadow duration-300 flex flex-col" >
+              <Title order={4}>Định hướng</Title>
+              <Text size="sm" color="dimmed">
+                Tìm ra ngành nghề phù hợp nhất với bạn
+              </Text>
+              <Button
+                fullWidth
+                className={`${classesProgress.button} mt-4`}
+                onClick={() => (loaded ? setLoaded(false) : !interval.active && interval.start())}
+                color={loaded ? 'teal' : "#0367B0"}
+                radius="md"
+              >
+                <div className={classesProgress.label}>
+                  {progress !== 0 ? 'ĐANG TẢI...' : loaded ? 'THÀNH CÔNG!' : 'KIỂM TRA NGAY'}
+                </div>
+                {progress !== 0 && (
+                  <Progress
+                    value={progress}
+                    className={classesProgress.progress}
+                    color={rgba(theme.colors.blue[2], 0.5)}
+                    radius="sm"
+                  />
+                )}
+              </Button>
+            </div>
+            
             <div className="bg-white shadow rounded-xl p-4 hover:shadow-lg transition-shadow duration-300">
               <Title order={4}>Thống kê</Title>
               <Text size="sm" color="dimmed">
@@ -79,7 +141,7 @@ const Dashboard = ({ userInfo }) => {
                   const progressPercent = Math.round(
                     ((progress.progress.doneQuestions.length || 0) /
                       progress.progress.totalQuestions) *
-                      100
+                    100
                   );
 
                   return (
@@ -90,8 +152,7 @@ const Dashboard = ({ userInfo }) => {
                         progressPercent={progressPercent}
                         current={progress.progress.doneQuestions.length || 0}
                         total={progress.progress.totalQuestions}
-                        onContinue={() => handleContinue(progress.contestId)}
-                      />
+                        onContinue={() => handleContinue(progress.contestId)} />
                     </div>
                   );
                 })
@@ -102,38 +163,11 @@ const Dashboard = ({ userInfo }) => {
               )}
             </div>
 
-            <div className="bg-white shadow rounded-xl p-4 cursor-pointer hover:shadow-lg transition-shadow duration-300" onClick={() => navigate('/notifications')}>
-              <Title order={4}>Thông báo</Title>
-              <Text size="sm" color="dimmed">
-                Các thông báo mới nhất sẽ hiển thị ở đây
-              </Text>
-            </div>
-
-            <div className="bg-white shadow rounded-xl p-4">
-            <Title order={4}>Hành động nhanh</Title>
-            <div className="mt-3">
-              {latestContests.length > 0 ? (
-                latestContests.map((contest) => (
-                  <div
-                    key={contest.id}
-                    className="p-2 rounded-md hover:bg-gray-100 cursor-pointer transition"
-                    onClick={() => navigate(`/contest/${contest.id}`)}
-                  >
-                    <Text size="sm" className="text-blue-600 font-medium">
-                      {contest.name}
-                    </Text>
-                  </div>
-                ))
-              ) : (
-                <Text size="sm" color="dimmed">
-                  Không có contest nào
-                </Text>
-              )}
-            </div>
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+      <div><PopUpModal opened={modalOpened} onClose={handleCloseModal} /></div>
+    </>
   );
 };
 
