@@ -130,10 +130,16 @@ const Contest = ({ userInfo }) => {
   setSubmitted(true);
 
   if (!contest || !userId) return;
-
+  let points = 0;
+  contest.questions.forEach((q) => {
+    if (answers[q.id] === q.correct_answer) {
+      points += 1;
+    }
+  });
   const resultData = {
     contestId: contest.id,
     name: contest.name,
+    point: (points / contest.questions.length) * 10,
     userId,
     questions: contest.questions.map((q) => {
       const { vector, ...qWithoutVector } = q;

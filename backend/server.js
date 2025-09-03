@@ -136,11 +136,11 @@ app.get("/get-contests", async (req, res) => {
 });
 
 app.get("/get-contest-results", async (req, res) => {
-  const{limit} = req.query;
+  const { limit } = req.query;
   try {
     const { data: contests, error } = await supabase
-      .from("contest-results")
-      .select("questions")
+      .from("contest_results")
+      .select("point, name");
     if (error) throw error;
 
     res.json(contests);
@@ -149,6 +149,7 @@ app.get("/get-contest-results", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 
 app.get("/get-progress/:userId", async (req, res) => {
@@ -232,8 +233,8 @@ app.delete("/contest-progress/:id", async (req, res) => {
 
 app.post("/contest-result/:id", async (req, res) => {
   try {
-    const { id } = req.params; // ✅ đúng key
-    const { name, questions, userId } = req.body;
+    const { id } = req.params; 
+    const { name, questions, userId, point } = req.body;
 
     if (!name || !Array.isArray(questions)) {
       return res.status(400).json({ error: "Invalid input" });
@@ -242,10 +243,11 @@ app.post("/contest-result/:id", async (req, res) => {
     const { data, error } = await supabase
       .from("contest_results")
       .insert([{ 
-        contestId: id,   // ✅ đúng tên cột
+        contestId: id,   
         name,
         questions,
-        userId
+        userId,
+        point
       }]);
 
     if (error) throw error;
