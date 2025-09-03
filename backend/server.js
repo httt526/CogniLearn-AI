@@ -118,13 +118,29 @@ app.get("/get-contest/:id", async (req, res) => {
 });
 
 app.get("/get-contests", async (req, res) => {
+  const{limit} = req.query;
   try {
     const { data: contests, error } = await supabase
       .from("contests")
       .select("id, name")
       .order("created_at", { ascending: false }) 
-      .limit(3); 
+      .limit(limit || 20); 
 
+    if (error) throw error;
+
+    res.json(contests);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/get-contest-results", async (req, res) => {
+  const{limit} = req.query;
+  try {
+    const { data: contests, error } = await supabase
+      .from("contest-results")
+      .select("questions")
     if (error) throw error;
 
     res.json(contests);
@@ -302,7 +318,12 @@ app.post("/signup", async (req, res) => {
       },
     });
     
-    await supabase.from('profiles').insert([{id: data.user.id, name, role}]);
+    await supabase.from('profiles').insert([{id: data.user.id, name, role, level: 0, classes: null, experiences: [ 
+      {"name": "Tư duy logic", "point": 0}, 
+      {"name" : "Sự cẩn thận", "point": 0}, 
+      {"name" : "Sự kiên trì", "point": 0}, 
+      {"name" : "Tốc độ học hỏi", "point": 0}
+    ]}]);
 
     if (error) return res.status(400).json({ error: error.message });
 
@@ -314,7 +335,7 @@ app.post("/signup", async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
-});
+}); 
 
 
 // ---------------- LOGIN ----------------
@@ -354,14 +375,19 @@ app.get("/get-profile", async (req, res) => {
       return res.status(401).json({ error: "Invalid token" });
     }
 
-    // Trả về user metadata luôn (name, role)
+    console.log("Authenticated user:", user);
+
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("*") 
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profileError || !profile) {
+      return res.status(404).json({ error: "Profile not found" });
+    }
     res.json({
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.user_metadata?.name,
-        role: user.user_metadata?.role,
-      },
+      user: profile
     });
   } catch (err) {
     console.error(err);

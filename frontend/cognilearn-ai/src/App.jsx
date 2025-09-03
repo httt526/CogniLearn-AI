@@ -98,9 +98,9 @@ const fetchProfile = useCallback(async () => {
           <Route path="/interview-prep/:sessionId" element={<InterviewPrep/>}/>        
           <Route path="/login" element={<Login fetchProfile = {fetchProfile}/>}/>
           <Route path="/signup" element={<Signup fetchProfile = {fetchProfile}/>}/>
-          <Route path="/contest/:id" element={<Contest userInfo = {userInfo}/>}/>
-          <Route path="/create-contest" element={<CreateContest/>}/>
-          <Route path="/contest-result/:id" element={<ContestResult/>}/>
+          <Route path="/contest/:id" element={<PrivateRoute><Contest userInfo = {userInfo}/></PrivateRoute>}/>
+          <Route path="/create-contest" element={<PrivateRoute><CreateContest/></PrivateRoute>}/>
+          <Route path="/contest-result/:id" element={<PrivateRoute><ContestResult/></PrivateRoute>}/>
           <Route path="/libary" element={<PrivateRoute><Libary userInfo={userInfo}/></PrivateRoute>}/>
           <Route path="/settings" element={<PrivateRoute><Setting userInfo={userInfo}/></PrivateRoute>}/>
           <Route path="/notifications" element={<PrivateRoute><Notifications userInfo={userInfo}/></PrivateRoute>}/>

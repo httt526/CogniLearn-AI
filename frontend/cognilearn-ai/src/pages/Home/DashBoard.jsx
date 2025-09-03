@@ -9,10 +9,10 @@ import { Button, Progress, rgba, useMantineTheme } from '@mantine/core';
 import { useInterval } from '@mantine/hooks';
 import classesProgress from '../ButtonProgress.module.css';
 import { PopUpModal } from "../../components/Modal/Popup.jsx";
+import { ResponsiveContainer, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 
 const Dashboard = ({ userInfo }) => {
   const [latestProgresses, setLatestProgresses] = useState([]);
-  const [latestContests, setLatestContests] = useState([]);
   const navigate = useNavigate();
 
   const fetchLatestContests = async () => {
@@ -38,7 +38,6 @@ const Dashboard = ({ userInfo }) => {
         }
       })
       .catch((err) => console.error("Lỗi khi lấy progress:", err));
-    fetchLatestContests();
   }, [userInfo]);
 
   const handleContinue = (contestId) => {
@@ -77,7 +76,7 @@ const Dashboard = ({ userInfo }) => {
 
   return (
     <>
-      <div className="flex h-fit bg-gray-50 ml-20 mr-20 mt-5 mb-5">
+      <div className="flex h-fit bg-gray-50">
         <nav>
           <Navbar />
         </nav>
@@ -86,7 +85,7 @@ const Dashboard = ({ userInfo }) => {
           <div className="flex items-center justify-between">
             <div>
               <Title order={2} className="text-gray-800">
-                Welcome back, {userInfo?.name || "Khách"} 👋
+                Welcome back, {userInfo?.name || "Khách"} 
               </Title>
             </div>
             <div className="flex items-center space-x-4 gap-4">
@@ -103,66 +102,89 @@ const Dashboard = ({ userInfo }) => {
             </div>
           </div>
 
-          <div className={`${classes.toolBar} grid grid-cols-1 gap-6 ml-auto w-full max-w-md mb-5`}>
-            <div style={{ padding: '20px' }} className="bg-white shadow rounded-xl p-4 cursor-pointer hover:shadow-lg transition-shadow duration-300 flex flex-col" >
-              <Title order={4}>Định hướng</Title>
-              <Text size="sm" color="dimmed">
-                Tìm ra ngành nghề phù hợp nhất với bạn
-              </Text>
-              <Button
-                fullWidth
-                className={`${classesProgress.button} mt-4`}
-                onClick={() => (loaded ? setLoaded(false) : !interval.active && interval.start())}
-                color={loaded ? 'teal' : "#0367B0"}
-                radius="md"
-              >
-                <div className={classesProgress.label}>
-                  {progress !== 0 ? 'ĐANG TẢI...' : loaded ? 'THÀNH CÔNG!' : 'KIỂM TRA NGAY'}
-                </div>
-                {progress !== 0 && (
-                  <Progress
-                    value={progress}
-                    className={classesProgress.progress}
-                    color={rgba(theme.colors.blue[2], 0.5)}
-                    radius="sm"
-                  />
-                )}
-              </Button>
+          <div className="flex gap-6 mt-6 mb-4 w-full">
+            <div className="flex flex-col gap-6 w-full">
+            <div className="bg-white rounded-xl shadow p-4 w-full h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart data={userInfo.experiences || []}>
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="name" />
+                  <PolarRadiusAxis />
+                  <Radar dataKey="point" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.2} />
+                </RadarChart>
+              </ResponsiveContainer>
             </div>
-            
-            <div className="bg-white shadow rounded-xl p-4 hover:shadow-lg transition-shadow duration-300">
-              <Title order={4}>Thống kê</Title>
-              <Text size="sm" color="dimmed">
-                Tổng quan về tiến độ mới nhất của bạn
-              </Text>
-
-              {latestProgresses.length > 0 ? (
-                latestProgresses.map((progress, idx) => {
-                  const progressPercent = Math.round(
-                    ((progress.progress.doneQuestions.length || 0) /
-                      progress.progress.totalQuestions) *
-                    100
-                  );
-
-                  return (
-                    <div key={idx} className="mt-4">
-                      <StatsCard
-                        title={progress.contestName}
-                        subtitle="Current Contest"
-                        progressPercent={progressPercent}
-                        current={progress.progress.doneQuestions.length || 0}
-                        total={progress.progress.totalQuestions}
-                        onContinue={() => handleContinue(progress.contestId)} />
-                    </div>
-                  );
-                })
-              ) : (
-                <Text size="sm" mt="sm" color="dimmed">
-                  No progress yet
+            <div className="bg-white rounded-xl shadow p-4 w-full h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart data={userInfo.experiences || []}>
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="name" />
+                  <PolarRadiusAxis />
+                  <Radar dataKey="point" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.2} />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+            </div>
+            <div className={`${classes.toolBar} grid grid-cols-1 gap-6 w-full max-w-md mb-5 z--10`}>
+              <div style={{ padding: '20px' }} className="bg-white shadow rounded-xl p-4 cursor-pointer hover:shadow-lg transition-shadow duration-300 flex flex-col" >
+                <Title order={4}>Định hướng</Title>
+                <Text size="sm" color="dimmed">
+                  Tìm ra ngành nghề phù hợp nhất với bạn
                 </Text>
-              )}
-            </div>
+                <Button
+                  fullWidth
+                  className={`${classesProgress.button} mt-4`}
+                  onClick={() => (loaded ? setLoaded(false) : !interval.active && interval.start())}
+                  color={loaded ? 'teal' : "#0367B0"}
+                  radius="md"
+                >
+                  <div className={classesProgress.label}>
+                    {progress !== 0 ? 'ĐANG TẢI...' : loaded ? 'THÀNH CÔNG!' : 'KIỂM TRA NGAY'}
+                  </div>
+                  {progress !== 0 && (
+                    <Progress
+                      value={progress}
+                      className={classesProgress.progress}
+                      color={rgba(theme.colors.blue[2], 0.5)}
+                      radius="sm"
+                    />
+                  )}
+                </Button>
+              </div>
+              
+              <div className="bg-white shadow rounded-xl p-4 hover:shadow-lg transition-shadow duration-300">
+                <Title order={4}>Thống kê</Title>
+                <Text size="sm" color="dimmed">
+                  Tổng quan về tiến độ mới nhất của bạn
+                </Text>
 
+                {latestProgresses.length > 0 ? (
+                  latestProgresses.map((progress, idx) => {
+                    const progressPercent = Math.round(
+                      ((progress.progress.doneQuestions.length || 0) /
+                        progress.progress.totalQuestions) *
+                      100
+                    );
+
+                    return (
+                      <div key={idx} className="mt-4">
+                        <StatsCard
+                          title={progress.contestName}
+                          subtitle="Current Contest"
+                          progressPercent={progressPercent}
+                          current={progress.progress.doneQuestions.length || 0}
+                          total={progress.progress.totalQuestions}
+                          onContinue={() => handleContinue(progress.contestId)} />
+                      </div>
+                    );
+                  })
+                ) : (
+                  <Text size="sm" mt="sm" color="dimmed">
+                    No progress yet
+                  </Text>
+                )}
+              </div>
+            </div>
           </div>
         </main>
       </div>
