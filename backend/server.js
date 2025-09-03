@@ -425,6 +425,18 @@ app.post("/logout", async (req, res) => {
   }
 });
 
+app.get("/topic-stats", async (req, res) => {
+  try {
+    const { data, error } = await supabase.rpc("get_topic_accuracy");
+    if (error) throw error;
+
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch topic stats" });
+  }
+});
+
 // Serve uploads folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads"), {}));
 // Start Server
