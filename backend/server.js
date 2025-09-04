@@ -136,16 +136,41 @@ app.get("/get-contests", async (req, res) => {
 });
 
 app.get("/get-contest-results", async (req, res) => {
-  const { limit } = req.query;
+  const { limit, userId } = req.query; // lấy user_id từ query
+
+  if (!userId) {
+    return res.status(400).json({ error: "Missing user_id" });
+  }
+
   try {
-    const { data: contests, error } = await supabase
+    const query = supabase
       .from("contest_results")
-      .select("point, name");
+      .select(`
+        id,
+        contestId,
+        point,
+        analysis_report,
+        created_at,
+        name 
+      `)
+      .eq("userId", userId)
+      .order("created_at", { ascending: false });
+
+    const { data, error } = await query;
     if (error) throw error;
 
-    res.json(contests);
+    const results = data.map((item) => ({
+      id: item.id,
+      contest_id: item.contestId,
+      name: item.name || "Unknown Contest",
+      point: item.point,
+      analysis_report: item.analysis_report,
+      created_at: item.created_at,
+    }));
+
+    res.json(results);
   } catch (err) {
-    console.error(err);
+    console.error("Error fetching contest results:", err);
     res.status(500).json({ error: err.message });
   }
 });

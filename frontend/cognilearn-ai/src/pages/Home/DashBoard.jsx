@@ -44,10 +44,10 @@ const Dashboard = ({ userInfo }) => {
 
   const fetchContestResults = async () => {
     try {
-      const res = await axiosInstance.get("/get-contest-results");
-      if (res.data) setContestResults(res.data);
+      const res = await axiosInstance.get(`/get-contest-results?userId=${userInfo.id}&limit=5`);
+      setContestResults(res.data || []);
     } catch (err) {
-      console.error("Lỗi khi lấy kết quả cuộc thi:", err);
+      console.error("Lỗi khi lấy kết quả:", err);
     }
   };
 
