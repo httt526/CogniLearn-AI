@@ -7,7 +7,6 @@ import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/SignUp";
 import DashBoard from "./pages/Home/DashBoard";
 import LandingPage from './pages/Home/LandingPage';
-import InterviewPrep from './pages/Interview/InterviewPrep';
 import Contest from './pages/Contest/Contest';
 import CreateContest from './pages/Contest/CreateContest';
 import ContestResult from './pages/Contest/ContestResult';
@@ -18,6 +17,7 @@ import TeacherDashboard from './pages/Home/TeacherDashBoard';
 import UserProfile from './pages/Account/UserProfile';
 import Setting from './pages/Setting/Setting';
 import Notifications from './pages/Home/Notifications';
+import CogniChat from './pages/Interview/CogniChat';
 
 const App = () => {
   const [userInfo, SetUserInfo] = useState(null);
@@ -95,7 +95,7 @@ const fetchProfile = useCallback(async () => {
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage/>}/>
-          <Route path="/interview-prep/:sessionId" element={<InterviewPrep/>}/>        
+          <Route path="/cogni-chat/:sessionId" element={<CogniChat/>}/>        
           <Route path="/login" element={<Login fetchProfile = {fetchProfile}/>}/>
           <Route path="/signup" element={<Signup fetchProfile = {fetchProfile}/>}/>
           <Route path="/contest/:id" element={<PrivateRoute><Contest userInfo = {userInfo}/></PrivateRoute>}/>
