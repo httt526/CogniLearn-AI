@@ -252,6 +252,23 @@ const Dashboard = ({ userInfo }) => {
                   </Text>
                 )}
               </div>
+              <div className="bg-white shadow rounded-xl p-4 hover:shadow-lg transition-shadow duration-300">
+                <Title order={4}>Chat với trợ lý của bạn</Title>
+                <Text size="sm" color="dimmed">
+                  trò chuyện với AI để được hỗ trợ học tập và định hướng nghề nghiệp
+                </Text>
+                <Button
+                  fullWidth
+                  className={`${classesProgress.button} mt-4`}
+                  onClick={() =>
+                    navigate("/cogni-chat/new")
+                  }
+                  color={loaded ? "teal" : "#0367B0"}
+                  radius="md"
+                >
+                  Chat ngay
+                </Button>
+              </div>
             </div>
           </div>
         </main>

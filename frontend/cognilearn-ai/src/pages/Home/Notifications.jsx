@@ -22,13 +22,10 @@ const Notifications = () => {
   const totalPages = 10; // Giả sử có 10 trang
 
   return (
-    <div className='flex h-screen bg-gray-50'>  
-      <nav>
-         <Navbar />
-      </nav>
+    <div className=' bg-gray-50'>  
       <main>
         <MantineProvider>
-          <div className="flex-1 p-6 main-content">
+          <div className="flex-1 p-6 ">
             <div className="w-full max-w-7xl h-fit bg-white rounded-2xl shadow-lg p-6 mx-auto">
               {/* Header */}
               <header className="grid grid-cols-4 gap-4 items-center bg-gray-800 text-white font-bold px-6 py-4 rounded-lg mb-4 text-sm">
