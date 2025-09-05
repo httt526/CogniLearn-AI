@@ -109,29 +109,76 @@ const ContestResult = ({ opened, onClose, result }) => {
           <Card shadow="sm" padding="lg" radius="md" withBorder>
             {structured.cognitiveWeaknesses ? (
               <>
+                {/* Lỗ hổng kiến thức */}
                 <Text size="sm" weight={500}>
                   Lỗ hổng kiến thức:
                 </Text>
-                <ul className="list-disc list-inside ml-4 text-sm">
-                  {structured.cognitiveWeaknesses.knowledgeGaps?.map(
-                    (gap, idx) => <li key={idx}>{gap}</li>
-                  )}
-                </ul>
+                {Array.isArray(structured.cognitiveWeaknesses.knowledgeGaps) &&
+                structured.cognitiveWeaknesses.knowledgeGaps.length > 0 ? (
+                  <ul className="list-disc list-inside ml-4 text-sm">
+                    {structured.cognitiveWeaknesses.knowledgeGaps.map((gap, idx) => {
+                      if (typeof gap === "string") {
+                        return <li key={idx}>{gap}</li>;
+                      }
+                      return (
+                        <li key={idx}>
+                          <strong>{gap.topic}</strong> – {gap.sub_topic} ({gap.difficulty})
+                          {gap.notes && (
+                            <div className="text-gray-600 text-xs">{gap.notes}</div>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <Text size="sm" className="ml-4 text-gray-600">
+                    Không có lỗ hổng kiến thức
+                  </Text>
+                )}
 
+                {/* Hiểu sai thường gặp */}
                 <Text size="sm" weight={500} className="mt-2">
                   Hiểu sai thường gặp:
                 </Text>
-                <ul className="list-disc list-inside ml-4 text-sm">
-                  {structured.cognitiveWeaknesses.misconceptions?.map(
-                    (mis, idx) => <li key={idx}>{mis}</li>
-                  )}
-                </ul>
+                {Array.isArray(structured.cognitiveWeaknesses.misconceptions) ? (
+                  structured.cognitiveWeaknesses.misconceptions.length > 0 ? (
+                    <ul className="list-disc list-inside ml-4 text-sm">
+                      {structured.cognitiveWeaknesses.misconceptions.map((mis, idx) => {
+                        if (typeof mis === "string") {
+                          return <li key={idx}>{mis}</li>;
+                        }
+                        return (
+                          <li key={idx}>
+                            <strong>{mis.topic}</strong> – {mis.sub_topic}
+                            {mis.description && (
+                              <div className="text-gray-600 text-xs">{mis.description}</div>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  ) : (
+                    <Text size="sm" className="ml-4 text-gray-600">
+                      Không có quan niệm sai lầm
+                    </Text>
+                  )
+                ) : typeof structured.cognitiveWeaknesses.misconceptions === "string" ? (
+                  <Text size="sm" className="ml-4 text-gray-600">
+                    {structured.cognitiveWeaknesses.misconceptions}
+                  </Text>
+                ) : (
+                  <Text size="sm" className="ml-4 text-gray-600">
+                    Không có dữ liệu
+                  </Text>
+                )}
               </>
             ) : (
               <Text size="sm">Chưa có dữ liệu</Text>
             )}
           </Card>
         </Tabs.Panel>
+
+
 
         {/* Đề xuất */}
         <Tabs.Panel value="recommendations" pt="md">
