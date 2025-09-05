@@ -13,7 +13,7 @@ const Contest = ({ userInfo }) => {
   const [timePerQuestion, setTimePerQuestion] = useState({});
   const [doneQuestions, setDoneQuestions] = useState(new Set());
 
-  const userId = userInfo?.id; 
+  const userId = userInfo?.id;
 
   // Load đề thi
   useEffect(() => {
@@ -21,9 +21,19 @@ const Contest = ({ userInfo }) => {
       try {
         const res = await axiosInstance.get(`/get-contest/${id}`);
         let contestData = res.data;
+        // Giả lập dữ liệu bổ sung để khớp với UI mẫu
+        // BẠN NÊN CẬP NHẬT API ĐỂ TRẢ VỀ CÁC TRƯỜNG NÀY
         contestData.questions = contestData.questions.map((q) => {
           const options = q.answer_info.options;
-          return { ...q, options };
+          return {
+            ...q,
+            options,
+            // --- Dữ liệu giả lập ---
+            definition: "to turn or twist",
+            example: "She pivots her left foot.",
+            image_url: "https://i.imgur.com/wVMMH3x.png", // URL ảnh mẫu
+            // --- Kết thúc dữ liệu giả lập ---
+          };
         });
         setContest(contestData);
       } catch (err) {
@@ -44,7 +54,7 @@ const Contest = ({ userInfo }) => {
           setAnswers(res.data.answers || {});
           setCurrentQIndex(res.data.currentQIndex || 0);
           setTimePerQuestion(res.data.timePerQuestion || {});
-          setDoneQuestions(new Set(res.data.doneQuestions || [])); 
+          setDoneQuestions(new Set(res.data.doneQuestions || []));
         }
       } catch (err) {
         console.error("Lỗi khi tải tiến độ:", err);
@@ -54,7 +64,12 @@ const Contest = ({ userInfo }) => {
   }, [id, userId]);
 
   // Lưu tiến độ lên server
-  const saveProgressToServer = async (updatedAnswers, doneQuestions, updatedIndex, updatedTime) => {
+  const saveProgressToServer = async (
+    updatedAnswers,
+    doneQuestions,
+    updatedIndex,
+    updatedTime
+  ) => {
     if (!userId || !contest) return;
     try {
       await axiosInstance.post(`/contest-progress/${id}`, {
@@ -70,19 +85,16 @@ const Contest = ({ userInfo }) => {
     }
   };
 
-  
   const handleChangeQuestion = (newIndex) => {
-    if(!contest) return;
+    if (!contest) return;
     const now = Date.now();
-    const currentQ = contest.questions[currentQIndex];
+const currentQ = contest.questions[currentQIndex];
     const timeSpent = Math.floor((now - questionStartTime) / 1000);
 
     const updatedTime = {
       ...timePerQuestion,
       [currentQ.id]: (timePerQuestion[currentQ.id] || 0) + timeSpent,
     };
-
-    console.log(doneQuestions);
 
     setTimePerQuestion(updatedTime);
     setCurrentQIndex(newIndex);
@@ -91,32 +103,27 @@ const Contest = ({ userInfo }) => {
     saveProgressToServer(answers, doneQuestions, newIndex, updatedTime);
   };
 
-  
-  const handleSelect = (questionId, option) => {
-  if (!contest) return;
-  console.log("Selected:", questionId, option);
+  const handleSelect = (questionId, optionKey) => {
+    if (!contest || submitted) return;
 
-  const updatedAnswers = {
-    ...answers,
-    [questionId]: option,
+    const updatedAnswers = {
+      ...answers,
+      [questionId]: optionKey,
+    };
+    const updatedDoneQuestions = new Set(doneQuestions);
+    updatedDoneQuestions.add(questionId);
+
+    setAnswers(updatedAnswers);
+    setDoneQuestions(updatedDoneQuestions);
+
+    saveProgressToServer(
+      updatedAnswers,
+      updatedDoneQuestions,
+      currentQIndex,
+      timePerQuestion
+    );
   };
-  const updatedDoneQuestions = new Set(doneQuestions);
-  updatedDoneQuestions.add(questionId);
 
-  console.log("Done Questions:", updatedDoneQuestions);
-
-  setAnswers(updatedAnswers);
-  setDoneQuestions(updatedDoneQuestions);
-
-  saveProgressToServer(
-    updatedAnswers,
-    updatedDoneQuestions,
-    currentQIndex,
-    timePerQuestion
-  );
-};
-
-  // Nộp bài
   const handleSubmit = async () => {
   const now = Date.now();
   const lastQ = contest.questions[currentQIndex];
@@ -172,86 +179,112 @@ const Contest = ({ userInfo }) => {
   }
 };
 
-
-  if (!contest) return <p>Đang tải đề thi...</p>;
+  if (!contest)
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-slate-900 text-white">
+        <p>Đang tải đề thi...</p>
+      </div>
+    );
 
   const currentQuestion = contest.questions[currentQIndex];
+  const optionKeys = Object.keys(currentQuestion.answer_info.options);
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">{contest.name}</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 p-4 font-sans">
+      <div className="w-full max-w-4xl bg-[#2d3748] rounded-2xl p-8 shadow-2xl relative">
+        <span className="absolute top-6 right-8 text-gray-400 text-sm">
+          {currentQIndex + 1} of {contest.questions.length}
+        </span>
 
-      <div key={currentQuestion.id} className="p-4 border rounded-lg">
-        <p className="font-semibold mb-2">
-          Câu {currentQIndex + 1}: {currentQuestion.content}
-        </p>
-
-        <div className="space-y-2">
-          {["A", "B", "C", "D"].map((option) => (
-            <label key={option} className="block">
-              <input
-                type="radio"
-                name={`q-${currentQuestion.id}`}
-                value={currentQuestion.answer_info.options[option]}
-                checked={answers[currentQuestion.id] === option}
-                onChange={() => handleSelect(currentQuestion.id, option)}
-                disabled={submitted}
-              />
-              <span className="ml-2">
-                {currentQuestion.answer_info.options[option]}
+        <div className="flex justify-between items-start gap-8">
+          {/* Phần nội dung bên trái */}
+          <div className="flex-grow">
+            <p className="text-gray-400 text-sm flex items-center">
+              Definition{" "}
+              <span className="ml-2 cursor-pointer" title="Listen">
+                🔊
               </span>
-            </label>
-          ))}
+            </p>
+            <h1 className="text-3xl font-bold text-white mt-2">
+              (v) {currentQuestion.content}
+            </h1>
+            <p className="text-xl text-gray-300 mt-2">
+              {currentQuestion.definition}
+            </p>
+            <p className="text-gray-400 mt-4">
+              <span className="font-bold">ex:</span> {currentQuestion.example}
+            </p>
+          </div>
+
+          {/* Phần ảnh bên phải */}
+          {currentQuestion.image_url && (
+            <div className="w-48 h-32 flex-shrink-0">
+              <img
+                src={currentQuestion.image_url}
+                alt="Illustration"
+                className="w-full h-full object-cover rounded-lg"
+              />
+            </div>
+          )}
         </div>
 
-        {submitted && (
-          <p
-            className={`mt-2 font-medium ${
-              answers[currentQuestion.id] === currentQuestion.correct_answer
-                ? "text-green-600"
-                : "text-red-600"
-            }`}
-          >
-            {answers[currentQuestion.id] === currentQuestion.correct_answer
-              ? "✅ Chính xác"
-              : `❌ Sai, đáp án đúng: ${currentQuestion.correct_answer}`}
-          </p>
-        )}
+        <div className="mt-10">
+          <p className="text-gray-400 mb-4">Choose an answer</p>
+<div className="grid grid-cols-2 gap-4">
+            {optionKeys.map((key) => {
+                const isSelected = answers[currentQuestion.id] === key;
+                return (
+                    <button
+                        key={key}
+                        onClick={() => handleSelect(currentQuestion.id, key)}
+                        disabled={submitted}
+                        className={`w-full p-4 rounded-lg text-white font-semibold transition-all duration-200
+                        ${isSelected ? 'bg-blue-600 ring-2 ring-blue-400' : 'bg-[#4a5568] hover:bg-[#2d3748]'}
+                        disabled:opacity-70 disabled:cursor-not-allowed`}
+                    >
+                        {currentQuestion.answer_info.options[key]}
+                    </button>
+                )
+            })}
+          </div>
+        </div>
+
+        <div className="text-center mt-6">
+          <button className="text-gray-400 hover:text-white transition">
+            Don't know?
+          </button>
+        </div>
       </div>
 
-      <div className="flex justify-between mt-4">
+      {/* Nút điều hướng */}
+      <div className="flex justify-between mt-6 w-full max-w-4xl">
         <button
           disabled={currentQIndex === 0}
           onClick={() => handleChangeQuestion(currentQIndex - 1)}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          className="px-6 py-2 bg-gray-600 text-white rounded-lg disabled:opacity-50"
         >
           Câu trước
         </button>
         {currentQIndex < contest.questions.length - 1 ? (
           <button
             onClick={() => handleChangeQuestion(currentQIndex + 1)}
-            className="px-4 py-2 bg-blue-600 text-white rounded"
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg"
           >
             Câu tiếp
           </button>
         ) : !submitted ? (
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-green-600 text-white rounded"
+            className="px-6 py-2 bg-green-600 text-white rounded-lg"
           >
             Nộp bài
           </button>
         ) : (
           <div>
-            <p className="text-lg font-bold text-purple-600">Bạn đã nộp bài!</p>
-            {submitted && (
-              <button
-                onClick={() => navigate("/dashboard")}
-                className="px-4 py-2 bg-purple-600 text-white rounded"
-              >
-                Quay về Trang chủ
-              </button>
-            )}
+            <p className="text-lg font-bold text-purple-400">
+              Bạn đã nộp bài!
+            </p>
+            {/* Nút quay về trang chủ có thể thêm vào đây nếu muốn */}
           </div>
         )}
       </div>
