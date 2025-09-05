@@ -54,19 +54,22 @@ app.get("/question/:id", async (req, res) => {
 
 app.post("/create-contest", async (req, res) => {
   try {
-    const { name, questions } = req.body; // dữ liệu gửi từ frontend
+    const { name, topics, number } = req.body; // dữ liệu gửi từ frontend
     
-    if (!name || !Array.isArray(questions)) {
+    if (!name || !Array.isArray(topics)) {
       return res.status(400).json({ error: "Invalid input" });
     }
-
+    const response = await axios.post("https://cognilearn-generator-api.onrender.com/tests/generate", {
+      seed_question_ids : topics,
+      questions_per_topic : number
+    })
     // Insert contest vào Supabase
     const { data, error } = await supabase
       .from("contests")
       .insert([
         { 
           name: name, 
-          questions: questions // cần kiểu ARRAY trong Supabase (Postgres) hoặc JSON
+          questions: response.data 
         }
       ])
       .select();
@@ -279,7 +282,7 @@ app.post("/contest-result/:id", async (req, res) => {
     const contestResultId = data.id;
     
     try {
-      await axios.post("https://cognilearn-analyzer-api.onrender.com/analyze", {
+      const res = await axios.post("https://cognilearn-analyzer-api.onrender.com/analyze", {
         contest_result_id: contestResultId
       });
     } catch (analyzeErr) {
@@ -474,6 +477,33 @@ app.get("/topic-stats", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch topic stats" });
+  }
+});
+
+app.get("/topics", async (req, res) => {
+
+ try {
+    const { data, error } = await supabase.rpc("get_question_topics");
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+
+});
+
+app.get("/search-topics", async (req, res) => {
+  const { query } = req.query; 
+  try {
+    const { data, error } = await supabase.rpc("search_question_topics", {
+      search_query: query,
+    });
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
 });
 

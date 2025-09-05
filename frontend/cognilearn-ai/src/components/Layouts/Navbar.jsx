@@ -37,16 +37,6 @@ function NavbarLink({ icon: Icon, label, active, onClick, path }) {
   );
 }
 
-
-
-const mockdata = [
-  { icon: IconHome2, label: 'Trang chủ', path: '/dashboard' },
-  { icon: IconLibrary, label: 'Thư viện', path: '/libary' },
-  { icon: IconNotification, label: 'Thông Báo', onclick: () => handleNotification() },
-  { icon: IconUser, label: 'Tài khoản', path: '/profile' },
-  { icon: IconSettings, label: 'Thiết lập', path: '/settings' },
-];
-
 export default function Navbar() {
   const location = useLocation();
   const [opened, setOpened] = useState(false);
@@ -58,8 +48,8 @@ export default function Navbar() {
   const mockdata = [
     { icon: IconHome2, label: 'Trang chủ', path: '/dashboard' },
     { icon: IconLibrary, label: 'Thư viện', path: '/libary' },
-    { icon: IconNotification, label: 'Thông Báo', onClick: handleNotification }, // ✅ sửa onclick -> onClick
     { icon: IconUser, label: 'Tài khoản', path: '/profile' },
+    { icon: IconNotification, label: 'Thông Báo', onClick: handleNotification },
     { icon: IconSettings, label: 'Thiết lập', path: '/settings' },
   ];
 
