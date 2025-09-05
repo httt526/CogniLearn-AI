@@ -21,19 +21,9 @@ const Contest = ({ userInfo }) => {
       try {
         const res = await axiosInstance.get(`/get-contest/${id}`);
         let contestData = res.data;
-        // Giả lập dữ liệu bổ sung để khớp với UI mẫu
-        // BẠN NÊN CẬP NHẬT API ĐỂ TRẢ VỀ CÁC TRƯỜNG NÀY
         contestData.questions = contestData.questions.map((q) => {
           const options = q.answer_info.options;
-          return {
-            ...q,
-            options,
-            // --- Dữ liệu giả lập ---
-            definition: "to turn or twist",
-            example: "She pivots her left foot.",
-            image_url: "https://i.imgur.com/wVMMH3x.png", // URL ảnh mẫu
-            // --- Kết thúc dữ liệu giả lập ---
-          };
+          return { ...q, options };
         });
         setContest(contestData);
       } catch (err) {
@@ -43,7 +33,6 @@ const Contest = ({ userInfo }) => {
     fetchContest();
   }, [id]);
 
-  // Lấy tiến độ từ server khi vào lại trang
   useEffect(() => {
     const fetchProgress = async () => {
       try {
@@ -63,7 +52,6 @@ const Contest = ({ userInfo }) => {
     if (userId) fetchProgress();
   }, [id, userId]);
 
-  // Lưu tiến độ lên server
   const saveProgressToServer = async (
     updatedAnswers,
     doneQuestions,
@@ -88,7 +76,7 @@ const Contest = ({ userInfo }) => {
   const handleChangeQuestion = (newIndex) => {
     if (!contest) return;
     const now = Date.now();
-const currentQ = contest.questions[currentQIndex];
+    const currentQ = contest.questions[currentQIndex];
     const timeSpent = Math.floor((now - questionStartTime) / 1000);
 
     const updatedTime = {
@@ -125,59 +113,57 @@ const currentQ = contest.questions[currentQIndex];
   };
 
   const handleSubmit = async () => {
-  const now = Date.now();
-  const lastQ = contest.questions[currentQIndex];
-  const timeSpent = Math.floor((now - questionStartTime) / 1000);
+    const now = Date.now();
+    const lastQ = contest.questions[currentQIndex];
+    const timeSpent = Math.floor((now - questionStartTime) / 1000);
 
-  const finalTimePerQuestion = {
-    ...timePerQuestion,
-    [lastQ.id]: (timePerQuestion[lastQ.id] || 0) + timeSpent,
-  };
+    const finalTimePerQuestion = {
+      ...timePerQuestion,
+      [lastQ.id]: (timePerQuestion[lastQ.id] || 0) + timeSpent,
+    };
 
-  setSubmitted(true);
+    setSubmitted(true);
 
-  if (!contest || !userId) return;
-  let points = 0;
-  contest.questions.forEach((q) => {
-    if (answers[q.id] === q.correct_answer) {
-      points += 1;
-    }
-  });
-  const resultData = {
-    contestId: contest.id,
-    name: contest.name,
-    point: (points / contest.questions.length) * 10,
-    userId,
-    questions: contest.questions.map((q) => {
-      const { vector, ...qWithoutVector } = q;
-      return {
-        ...qWithoutVector,
-        selected: answers[q.id] || null,
-        result:
-          answers[q.id] !== null
-            ? answers[q.id] === q.correct_answer
-              ? "correct"
-              : "incorrect"
-            : "unanswered",
-        time: finalTimePerQuestion[q.id] || 0,
-      };
-    }),
-  };
-
-  try {
-    // Lưu kết quả
-    await axiosInstance.post(`/contest-result/${id}`, resultData);
-    console.log("Kết quả đã lưu thành công!");
-
-    // Xóa tiến trình thay vì reset
-    await axiosInstance.delete(`/contest-progress/${id}`, {
-      data: { userId },
+    if (!contest || !userId) return;
+    let points = 0;
+    contest.questions.forEach((q) => {
+      if (answers[q.id] === q.correct_answer) {
+        points += 1;
+      }
     });
-    console.log("Tiến trình đã được xóa!");
-  } catch (err) {
-    console.error("Lỗi khi lưu kết quả hoặc xóa tiến trình:", err);
-  }
-};
+    const resultData = {
+      contestId: contest.id,
+      name: contest.name,
+      point: (points / contest.questions.length) * 10,
+      userId,
+      questions: contest.questions.map((q) => {
+        const { vector, ...qWithoutVector } = q;
+        return {
+          ...qWithoutVector,
+          selected: answers[q.id] || null,
+          result:
+            answers[q.id] !== null
+              ? answers[q.id] === q.correct_answer
+                ? "correct"
+                : "incorrect"
+              : "unanswered",
+          time: finalTimePerQuestion[q.id] || 0,
+        };
+      }),
+    };
+
+    try {
+      await axiosInstance.post(`/contest-result/${id}`, resultData);
+      console.log("Kết quả đã lưu thành công!");
+      // ❌ Không navigate ngay, để học sinh xem lại kết quả
+      await axiosInstance.delete(`/contest-progress/${id}`, {
+        data: { userId },
+      });
+      console.log("Tiến trình đã được xóa!");
+    } catch (err) {
+      console.error("Lỗi khi lưu kết quả hoặc xóa tiến trình:", err);
+    }
+  };
 
   if (!contest)
     return (
@@ -197,26 +183,15 @@ const currentQ = contest.questions[currentQIndex];
         </span>
 
         <div className="flex justify-between items-start gap-8">
-          {/* Phần nội dung bên trái */}
           <div className="flex-grow">
-            <p className="text-gray-400 text-sm flex items-center">
-              Definition{" "}
-              <span className="ml-2 cursor-pointer" title="Listen">
-                🔊
-              </span>
-            </p>
             <h1 className="text-3xl font-bold text-white mt-2">
-              (v) {currentQuestion.content}
+              {currentQuestion.content}
             </h1>
             <p className="text-xl text-gray-300 mt-2">
               {currentQuestion.definition}
             </p>
-            <p className="text-gray-400 mt-4">
-              <span className="font-bold">ex:</span> {currentQuestion.example}
-            </p>
           </div>
 
-          {/* Phần ảnh bên phải */}
           {currentQuestion.image_url && (
             <div className="w-48 h-32 flex-shrink-0">
               <img
@@ -230,64 +205,90 @@ const currentQ = contest.questions[currentQIndex];
 
         <div className="mt-10">
           <p className="text-gray-400 mb-4">Choose an answer</p>
-<div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             {optionKeys.map((key) => {
-                const isSelected = answers[currentQuestion.id] === key;
-                return (
-                    <button
-                        key={key}
-                        onClick={() => handleSelect(currentQuestion.id, key)}
-                        disabled={submitted}
-                        className={`w-full p-4 rounded-lg text-white font-semibold transition-all duration-200
-                        ${isSelected ? 'bg-blue-600 ring-2 ring-blue-400' : 'bg-[#4a5568] hover:bg-[#2d3748]'}
-                        disabled:opacity-70 disabled:cursor-not-allowed`}
-                    >
-                        {currentQuestion.answer_info.options[key]}
-                    </button>
-                )
+              const isSelected = answers[currentQuestion.id] === key;
+              const isCorrect = currentQuestion.correct_answer === key;
+
+              let optionClass = "bg-[#4a5568] text-white";
+              if (submitted) {
+                if (isSelected && isCorrect) {
+                  optionClass = "bg-green-600 text-white"; // chọn đúng
+                } else if (isSelected && !isCorrect) {
+                  optionClass = "bg-red-600 text-white"; // chọn sai
+                } else if (!isSelected && isCorrect) {
+                  optionClass = "bg-green-500 text-white"; // đáp án đúng (học sinh bỏ qua)
+                } else {
+                  optionClass = "bg-[#4a5568] text-gray-300"; // còn lại
+                }
+              } else {
+                if (isSelected) {
+                  optionClass = "bg-[#0367B0] text-white ring-2 ring-blue-400";
+                }
+              }
+
+              return (
+                <button
+                  key={key}
+                  onClick={() => handleSelect(currentQuestion.id, key)}
+                  disabled={submitted}
+                  className={`w-full p-4 rounded-lg font-semibold cursor-pointer transition-all duration-200 ${optionClass}`}
+                >
+                  {currentQuestion.answer_info.options[key]}
+                </button>
+              );
             })}
           </div>
         </div>
 
-        <div className="text-center mt-6">
-          <button className="text-gray-400 hover:text-white transition">
-            Don't know?
-          </button>
-        </div>
+        {submitted && (
+          <div className="mt-6 text-center">
+            <p className="text-lg font-bold text-white">
+              Đáp án đúng:{" "}
+              {currentQuestion.answer_info.options[
+                currentQuestion.correct_answer
+              ]}
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* Nút điều hướng */}
       <div className="flex justify-between mt-6 w-full max-w-4xl">
         <button
           disabled={currentQIndex === 0}
           onClick={() => handleChangeQuestion(currentQIndex - 1)}
-          className="px-6 py-2 bg-gray-600 text-white rounded-lg disabled:opacity-50"
+          className="px-6 py-2 bg-gray-600 text-white rounded-lg disabled:opacity-50 cursor-pointer"
         >
           Câu trước
         </button>
         {currentQIndex < contest.questions.length - 1 ? (
           <button
             onClick={() => handleChangeQuestion(currentQIndex + 1)}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg"
+            className="px-6 py-2 bg-[#0367B0] text-white rounded-lg cursor-pointer"
           >
             Câu tiếp
           </button>
         ) : !submitted ? (
           <button
             onClick={handleSubmit}
-            className="px-6 py-2 bg-green-600 text-white rounded-lg"
+            className="px-6 py-2 bg-green-600 text-white rounded-lg cursor-pointer"
           >
             Nộp bài
           </button>
         ) : (
           <div>
-            <p className="text-lg font-bold text-purple-400">
-              Bạn đã nộp bài!
+            <p className="text-lg font-bold text-white">
+              Bạn đã nộp bài! Xem lại đáp án ở trên.
             </p>
-            {/* Nút quay về trang chủ có thể thêm vào đây nếu muốn */}
           </div>
         )}
       </div>
+      <button
+        onClick={() => navigate("/dashboard")}
+        className="mt-2 px-6 py-2 bg-[#112D4E] text-white rounded-lg cursor-pointer"
+      >
+        Về Dashboard
+      </button>
     </div>
   );
 };

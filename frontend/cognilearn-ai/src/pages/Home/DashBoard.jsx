@@ -159,7 +159,7 @@ const Dashboard = ({ userInfo }) => {
                     <LineChart
                       h={300}
                       data={contestResults}
-                      dataKey="name"
+                      dataKey="created_at"
                       series={[{ name: "point", color: "indigo.6" }]}
                     />
                   </div>

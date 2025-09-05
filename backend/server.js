@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const supabase = require('./config/db');
+const axios = require("axios");
 const app = express();
 
 // Middleware to handle CORS
@@ -122,7 +123,7 @@ app.get("/get-contests", async (req, res) => {
   try {
     const { data: contests, error } = await supabase
       .from("contests")
-      .select("id, name")
+      .select("id, name, created_at")
       .order("created_at", { ascending: false }) 
       .limit(limit || 20); 
 
@@ -174,8 +175,6 @@ app.get("/get-contest-results", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-
 
 app.get("/get-progress/:userId", async (req, res) => {
   const { userId } = req.params;
@@ -254,8 +253,6 @@ app.delete("/contest-progress/:id", async (req, res) => {
   }
 });
 
-
-
 app.post("/contest-result/:id", async (req, res) => {
   try {
     const { id } = req.params; 
@@ -265,6 +262,7 @@ app.post("/contest-result/:id", async (req, res) => {
       return res.status(400).json({ error: "Invalid input" });
     }
 
+    // 1️⃣ Lưu contest result
     const { data, error } = await supabase
       .from("contest_results")
       .insert([{ 
@@ -273,17 +271,32 @@ app.post("/contest-result/:id", async (req, res) => {
         questions,
         userId,
         point
-      }]);
+      }])
+      .select("id")   
+      .single();
 
     if (error) throw error;
+    const contestResultId = data.id;
+    
+    try {
+      await axios.post("https://cognilearn-analyzer-api.onrender.com/analyze", {
+        contest_result_id: contestResultId
+      });
+    } catch (analyzeErr) {
+      console.error("Analyzer error:", analyzeErr.message);
+ 
+    }
 
-    res.status(201).json({ message: "Lưu kết quả thành công", data });
+    res.status(201).json({ 
+      message: "Lưu kết quả thành công, đang phân tích...", 
+      data 
+    });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Có lỗi khi lưu kết quả" });
   }
 });
-
 app.get("/contest-progress/:contestId", async (req, res) => {
   const { contestId } = req.params;
   const { userId } = req.query;
