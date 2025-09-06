@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import ContestResult from "./ContestResult"; 
 import ContestCard from "../../components/Cards/ContestCard";
 
-const TeacherLibrary = ({ userInfo }) => {
+const TeacherLibrary = ({userInfo}) => {
   const navigate = useNavigate();
   const [latestContests, setLatestContests] = useState([]);
   const [contestResults, setContestResults] = useState([]);
@@ -55,6 +55,7 @@ const TeacherLibrary = ({ userInfo }) => {
                   key={contest.id}
                   name={contest.name}
                   date={contest.created_at}
+                  userInfo={contest.author}
                   path={"/ranking/" + contest.id}
                 />
               ))
@@ -75,6 +76,7 @@ const TeacherLibrary = ({ userInfo }) => {
                   key={contest.id}
                   name={contest.name}
                   date={contest.created_at}
+                  userInfo={contest.author}
                   path={"/ranking/" + contest.id}
                 />
               ))

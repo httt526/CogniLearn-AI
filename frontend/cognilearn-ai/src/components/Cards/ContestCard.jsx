@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import "./ArticleCard.css"; // thay thế cho ArticleCard.module.css nếu bạn muốn css module
 
-export default function ArticleCard({name, date, path}) {
+export default function ArticleCard({name, date, path, userInfo}) {
   const linkProps = {
     href: path,
     target: "_blank",
@@ -34,15 +34,15 @@ export default function ArticleCard({name, date, path}) {
         variant="gradient"
         gradient={{ from: "yellow", to: "red" }}
       >
-        outstanding
+        Hot
       </Badge>
 
       <Text className="title" component="a" {...linkProps}>
         {name}
       </Text>
 
-      <Text style={{ fontSize: "14px", color: "#868e96" }} lineClamp={4}>
-        {date || "2024-06-01 10:00 AM"} 
+      <Text style={{ fontSize: "14px", color: "#868e96" }}>
+        {new Date(date).toLocaleDateString("vi-VN")}
       </Text>
 
       <Group justify="space-between" className="footer">
@@ -54,11 +54,11 @@ export default function ArticleCard({name, date, path}) {
             style={{ marginRight: "8px" }}
           />
           <Text style={{ fontSize: "14px" }} inline>
-            Bill Wormeater
+            {userInfo}
           </Text>
         </Center>
 
-        <Group gap={8} mr={0}>
+        {/* <Group gap={8} mr={0}>
           <ActionIcon className="action">
             <IconHeart size={16} color={theme.colors.red[6]} />
           </ActionIcon>
@@ -68,7 +68,7 @@ export default function ArticleCard({name, date, path}) {
           <ActionIcon className="action">
             <IconShare size={16} color={theme.colors.blue[6]} />
           </ActionIcon>
-        </Group>
+        </Group> */}
       </Group>
     </Card>
   );

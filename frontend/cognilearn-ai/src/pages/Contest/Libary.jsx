@@ -30,7 +30,7 @@ const Library = ({ userInfo }) => {
       console.error("Lỗi khi lấy kết quả:", err);
     }
   };
-
+  console.log(latestContests);
   useEffect(() => {
     if (!userInfo?.id) return;
     fetchLatestContests();
@@ -51,14 +51,15 @@ const Library = ({ userInfo }) => {
         {/* 🔹 Danh sách contest gần đây */}
         <div className="p-5 bg-white shadow rounded-2xl mb-6 text-[#112D4E]">
           <Title order={4}>Bài kiểm tra gần đây</Title>
-          <div className="grid grid-cols-5 gap-4 mt-3">
+          <div className="grid grid-cols-8 gap-4 mt-3 col-span-full">
             {latestContests.length > 0 ? (
               latestContests.map((contest) => (
-                <ContestCard
+                <ContestCard  
                   key={contest.id}
                   name={contest.name}
                   date={contest.created_at}
                   path={`/contest/${contest.id}`}
+                  userInfo={contest.author}
                 />
               ))
             ) : (
@@ -71,7 +72,7 @@ const Library = ({ userInfo }) => {
         
       <div className="p-5 bg-white shadow rounded-2xl mb-6 text-[#112D4E]">
           <Title order={4}>Bài kiểm tra đề xuất</Title>
-          <div className="grid grid-cols-5 gap-4 mt-3">
+          <div className="grid grid-cols-8 gap-4 mt-3">
             {latestContests.length > 0 ? (
               latestContests.map((contest) => (
                 <ContestCard
@@ -79,6 +80,7 @@ const Library = ({ userInfo }) => {
                   name={contest.name}
                   date={contest.created_at}
                   path={`/contest/${contest.id}`}
+                  userInfo={contest.author}
                 />
               ))
             ) : (
@@ -92,11 +94,11 @@ const Library = ({ userInfo }) => {
 
         {/* 🔹 Bảng lịch sử làm bài */}
         <div className="p-5 bg-white shadow rounded-2xl text-[#112D4E]">
-          <Title order={4}>📊 Lịch sử làm bài</Title>
+          <Title order={4}>Lịch sử làm bài</Title>
           {contestResults.length > 0 ? (
             <Table
               highlightOnHover
-              className="mt-3 rounded-lg shadow-sm text-[#112D4E]"
+              className="mt-3 rounded-lg shadow-sm text-[#112D4E] custom-table"
             >
               <Table.Thead>
                 <Table.Tr>

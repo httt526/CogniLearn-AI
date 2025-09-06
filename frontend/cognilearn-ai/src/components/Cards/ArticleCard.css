@@ -1,7 +1,16 @@
 .card {
   position: relative;
   background-color: var(--mantine-color-body);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  border: 1px solid transparent;
+  cursor: pointer;
 }
+
+.card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
 
 .rating {
   position: absolute;
@@ -15,6 +24,9 @@
   font-family: Outfit, var(--mantine-font-family);
   margin-top: var(--mantine-spacing-md);
   margin-bottom: 5px;
+  white-space: nowrap;       
+  overflow: hidden;           
+  text-overflow: ellipsis;
 }
 
 .action {

@@ -27,7 +27,7 @@ const ContestResult = ({ opened, onClose, result }) => {
   const topicData = structured.topicPerformance
     ? Object.entries(structured.topicPerformance).map(([topic, data]) => ({
         topic: data.notes,
-        accuracy: parseFloat(data.accuracy) * 100 || 0,
+        accuracy: parseFloat(data.accuracy) * 100 || parseFloat(data.accuracyRate) * 100,
       }))
     : [];
 

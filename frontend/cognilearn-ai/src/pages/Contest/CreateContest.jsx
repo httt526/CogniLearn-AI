@@ -5,7 +5,7 @@ import Navbar from "../../components/Layouts/Navbar";
 import { TextInput, ScrollArea, Table, Text, UnstyledButton, Group, Center, Pagination } from "@mantine/core";
 import { IconSearch, IconChevronDown, IconChevronUp, IconSelector } from "@tabler/icons-react";
 
-const CreateContest = () => {
+const CreateContest = ({userInfo}) => {
   const [contestName, setContestName] = useState("");
   const [topics, setTopics] = useState([]);
   const [filteredTopics, setFilteredTopics] = useState([]);
@@ -74,6 +74,7 @@ const CreateContest = () => {
       await axiosInstance.post("/create-contest", {
         name: contestName,
         topics: selectedTopics,
+        author: userInfo
       });
       alert("Contest created successfully!");
       navigate("/");

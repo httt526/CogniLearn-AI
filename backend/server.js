@@ -54,7 +54,7 @@ app.get("/question/:id", async (req, res) => {
 
 app.post("/create-contest", async (req, res) => {
   try {
-    const { name, topics, number } = req.body; // dữ liệu gửi từ frontend
+    const { name, topics, number, author } = req.body; // dữ liệu gửi từ frontend
     
     if (!name || !Array.isArray(topics)) {
       return res.status(400).json({ error: "Invalid input" });
@@ -69,7 +69,8 @@ app.post("/create-contest", async (req, res) => {
       .insert([
         { 
           name: name, 
-          questions: response.data 
+          questions: response.data ,
+          author: author.name
         }
       ])
       .select();
@@ -126,7 +127,7 @@ app.get("/get-contests", async (req, res) => {
   try {
     const { data: contests, error } = await supabase
       .from("contests")
-      .select("id, name, created_at")
+      .select("id, name, created_at, author")
       .order("created_at", { ascending: false }) 
       .limit(limit || 20); 
 
