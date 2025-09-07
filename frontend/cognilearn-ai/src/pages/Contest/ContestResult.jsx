@@ -25,11 +25,18 @@ const ContestResult = ({ opened, onClose, result }) => {
 
   // Chuẩn hóa dữ liệu cho biểu đồ
   const topicData = structured.topicPerformance
-    ? Object.entries(structured.topicPerformance).map(([topic, data]) => ({
-        topic: data.notes,
-        accuracy: parseFloat(data.accuracy) * 100 || parseFloat(data.accuracyRate),
-      }))
-    : [];
+  ? Object.entries(structured.topicPerformance).map(([topic, data]) => ({
+      topic: data.notes,
+      accuracy:
+        (parseFloat(data.accuracy) <= 1
+          ? parseFloat(data.accuracy) * 100
+          : parseFloat(data.accuracy)) ||
+        (parseFloat(data.accuracyRate) <= 1
+          ? parseFloat(data.accuracyRate) * 100
+          : parseFloat(data.accuracyRate)),
+    }))
+  : [];
+
 
   return (
       <Tabs defaultValue="overview">

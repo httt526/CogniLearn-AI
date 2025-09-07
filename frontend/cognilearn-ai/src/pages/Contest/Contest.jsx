@@ -156,9 +156,7 @@ const Contest = ({ userInfo }) => {
       await axiosInstance.post(`/contest-result/${id}`, resultData);
       console.log("Kết quả đã lưu thành công!");
       // ❌ Không navigate ngay, để học sinh xem lại kết quả
-      await axiosInstance.delete(`/contest-progress/${id}`, {
-        data: { userId },
-      });
+      await axiosInstance.delete(`/contest-progress/${id}?userId=${userId}`);
       console.log("Tiến trình đã được xóa!");
     } catch (err) {
       console.error("Lỗi khi lưu kết quả hoặc xóa tiến trình:", err);

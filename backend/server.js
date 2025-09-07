@@ -235,7 +235,7 @@ app.get("/get-progress/:userId", async (req, res) => {
 
 app.delete("/contest-progress/:id", async (req, res) => {
   const { id } = req.params; // contestId
-  const { userId } = req.body;
+  const { userId } = req.query;
 
   if (!userId) {
     return res.status(400).json({ error: "Missing userId" });
