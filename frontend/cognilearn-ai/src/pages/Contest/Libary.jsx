@@ -1,10 +1,11 @@
-import { Text, Title, Table, Button, Modal } from "@mantine/core";
+import { Text, Title, Button, Modal, TextInput, ScrollArea, UnstyledButton, Group, Center, SimpleGrid, Table } from "@mantine/core";
 import Navbar from "../../components/Layouts/Navbar";
 import axiosInstance from "../../utils/axiosInsantce";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import ContestResult from "./ContestResult"; 
 import ContestCard from "../../components/Cards/ContestCard";
+import { IconSearch } from "@tabler/icons-react";
 
 const Library = ({ userInfo }) => {
   const navigate = useNavigate();
@@ -12,6 +13,10 @@ const Library = ({ userInfo }) => {
   const [contestResults, setContestResults] = useState([]);
   const [opened, setOpened] = useState(false);
   const [selectedResult, setSelectedResult] = useState(null);
+
+  const [search, setSearch] = useState("");
+  const [activePage, setActivePage] = useState(1);
+  const pageSize = 20; // mỗi trang tối đa 20 contest
 
   const fetchLatestContests = async () => {
     try {
@@ -30,7 +35,23 @@ const Library = ({ userInfo }) => {
       console.error("Lỗi khi lấy kết quả:", err);
     }
   };
-  console.log(latestContests);
+
+  // 🔹 Search
+  const handleSearchChange = (event) => {
+    setSearch(event.currentTarget.value);
+    setActivePage(1); // reset về trang đầu khi search
+  };
+
+  // 🔹 Lọc data theo search
+  const displayedContests = latestContests.filter((c) =>
+    c.name.toLowerCase().includes(search.toLowerCase().trim())
+  );
+
+  // 🔹 Pagination
+  const startIndex = (activePage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedContest = displayedContests.slice(startIndex, endIndex);
+
   useEffect(() => {
     if (!userInfo?.id) return;
     fetchLatestContests();
@@ -45,36 +66,27 @@ const Library = ({ userInfo }) => {
       {/* 🔹 Main Content */}
       <main className="flex-1 p-6 main-content overflow-y-auto">
         <div className="flex items-center justify-between mb-6 text-xl text-[#112D4E] font-semibold">
-          📚 Thư viện
+          Thư viện
         </div>
 
-        {/* 🔹 Danh sách contest gần đây */}
+        {/* 🔹 Danh sách contest */}
         <div className="p-5 bg-white shadow rounded-2xl mb-6 text-[#112D4E]">
-          <Title order={4}>Bài kiểm tra gần đây</Title>
-          <div className="grid grid-cols-8 gap-4 mt-3 col-span-full">
-            {latestContests.length > 0 ? (
-              latestContests.map((contest) => (
-                <ContestCard  
-                  key={contest.id}
-                  name={contest.name}
-                  date={contest.created_at}
-                  path={`/contest/${contest.id}`}
-                  userInfo={contest.author}
-                />
-              ))
-            ) : (
-              <Text size="sm" color="#112D4E">
-                Không có contest nào
-              </Text>
-            )}
-          </div>
-        </div>
-        
-      <div className="p-5 bg-white shadow rounded-2xl mb-6 text-[#112D4E]">
-          <Title order={4}>Bài kiểm tra đề xuất</Title>
-          <div className="grid grid-cols-8 gap-4 mt-3">
-            {latestContests.length > 0 ? (
-              latestContests.map((contest) => (
+          <Title order={4}>Danh sách bài kiểm tra</Title>
+          <TextInput
+            placeholder="Search contest..."
+            mb="md"
+            leftSection={<IconSearch size={16} stroke={1.5} />}
+            value={search}
+            onChange={handleSearchChange}
+          />
+
+          {paginatedContest.length > 0 ? (
+            <SimpleGrid
+              cols={{ base: 1, sm: 2, md: 3, lg: 4, xl: 5 }} // tối đa 5 card 1 hàng
+              spacing="lg"
+              verticalSpacing="lg"
+            >
+              {paginatedContest.map((contest) => (
                 <ContestCard
                   key={contest.id}
                   name={contest.name}
@@ -82,15 +94,14 @@ const Library = ({ userInfo }) => {
                   path={`/contest/${contest.id}`}
                   userInfo={contest.author}
                 />
-              ))
-            ) : (
-              <Text size="sm" color="#112D4E">
-                Không có contest nào
-              </Text>
-            )}
-          </div>
+              ))}
+            </SimpleGrid>
+          ) : (
+            <Text ta="center" fw={500} mt="md">
+              Nothing found
+            </Text>
+          )}
         </div>
-
 
         {/* 🔹 Bảng lịch sử làm bài */}
         <div className="p-5 bg-white shadow rounded-2xl text-[#112D4E]">
@@ -102,7 +113,7 @@ const Library = ({ userInfo }) => {
             >
               <Table.Thead>
                 <Table.Tr>
-                  <Table.Th color="#112D4E">Tên Contest</Table.Th>
+                  <Table.Th>Tên Contest</Table.Th>
                   <Table.Th>Điểm</Table.Th>
                   <Table.Th>Ngày làm</Table.Th>
                   <Table.Th style={{ width: "150px", textAlign: "center" }}>Hành động</Table.Th>
@@ -137,7 +148,6 @@ const Library = ({ userInfo }) => {
                 ))}
               </Table.Tbody>
             </Table>
-
           ) : (
             <Text size="sm" color="dimmed" className="mt-3">
               Bạn chưa có lịch sử làm bài nào
@@ -154,9 +164,7 @@ const Library = ({ userInfo }) => {
         size="lg"
         radius="md"
       >
-        {selectedResult && (
-          <ContestResult result={selectedResult} />
-        )}
+        {selectedResult && <ContestResult result={selectedResult} />}
       </Modal>
     </div>
   );
