@@ -11,22 +11,21 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
-import "./ArticleCard.css"; // thay thế cho ArticleCard.module.css nếu bạn muốn css module
+import { useNavigate } from "react-router-dom";
+import "./ArticleCard.css";
 
-export default function ArticleCard({name, date, path, userInfo}) {
-  const linkProps = {
-    href: path,
-    target: "_blank",
-    rel: "noopener noreferrer",
-  };
+export default function ArticleCard({ name, date, path, userInfo }) {
   const theme = useMantineTheme();
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate(path);
+  };
 
   return (
-    <Card withBorder radius="md" className="card">
+    <Card withBorder radius="md" className="card" onClick={handleNavigate} style={{ cursor: "pointer" }}>
       <Card.Section>
-        <a {...linkProps}>
-          <Image src="https://i.imgur.com/1Ew4mrb.png" height={180} />
-        </a>
+        <Image src="https://i.imgur.com/1Ew4mrb.png" height={180} />
       </Card.Section>
 
       <Badge
@@ -37,7 +36,7 @@ export default function ArticleCard({name, date, path, userInfo}) {
         Hot
       </Badge>
 
-      <Text className="title" component="a" {...linkProps}>
+      <Text className="title" onClick={handleNavigate} style={{ cursor: "pointer" }}>
         {name}
       </Text>
 
@@ -57,18 +56,6 @@ export default function ArticleCard({name, date, path, userInfo}) {
             {userInfo}
           </Text>
         </Center>
-
-        {/* <Group gap={8} mr={0}>
-          <ActionIcon className="action">
-            <IconHeart size={16} color={theme.colors.red[6]} />
-          </ActionIcon>
-          <ActionIcon className="action">
-            <IconBookmark size={16} color={theme.colors.yellow[7]} />
-          </ActionIcon>
-          <ActionIcon className="action">
-            <IconShare size={16} color={theme.colors.blue[6]} />
-          </ActionIcon>
-        </Group> */}
       </Group>
     </Card>
   );

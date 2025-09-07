@@ -19,6 +19,7 @@ import Setting from './pages/Setting/Setting';
 import Notifications from './pages/Home/Notifications';
 import CogniChat from './pages/Interview/CogniChat';
 import TeacherLibrary from './pages/Contest/TeacherLibary';
+import Standing from './pages/Contest/Standing';
 
 const App = () => {
   const [userInfo, SetUserInfo] = useState(null);
@@ -101,9 +102,11 @@ const fetchProfile = useCallback(async () => {
           <Route path="/signup" element={<Signup fetchProfile = {fetchProfile}/>}/>
           <Route path="/contest/:id" element={<PrivateRoute><Contest userInfo = {userInfo}/></PrivateRoute>}/>
           {userInfo?.role === "teacher" && <Route path="/create-contest" element={<PrivateRoute><CreateContest userInfo={userInfo}/></PrivateRoute>}/>}
+          {userInfo?.role === "teacher" && <Route path="/standing/:contestId" element={<PrivateRoute><Standing userInfo={userInfo}/></PrivateRoute>}/>}
           <Route path="/contest-result/:id" element={<PrivateRoute><ContestResult/></PrivateRoute>}/>
           <Route path="/settings" element={<PrivateRoute><Setting userInfo={userInfo}/></PrivateRoute>}/>
           <Route path="/notifications" element={<PrivateRoute><Notifications userInfo={userInfo}/></PrivateRoute>}/>
+          
           <Route
             path="/profile"
             element={

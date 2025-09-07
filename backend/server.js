@@ -128,9 +128,7 @@ app.get("/get-contests", async (req, res) => {
     const { data: contests, error } = await supabase
       .from("contests")
       .select("id, name, created_at, author")
-      .order("created_at", { ascending: false }) 
-      .limit(limit || 20); 
-
+      .order("created_at", { ascending: false });
     if (error) throw error;
 
     res.json(contests);
@@ -160,6 +158,46 @@ app.get("/get-contest-results", async (req, res) => {
       `)
       .eq("userId", userId)
       .order("created_at", { ascending: false });
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    const results = data.map((item) => ({
+      id: item.id,
+      contest_id: item.contestId,
+      name: item.name || "Unknown Contest",
+      point: item.point,
+      analysis_report: item.analysis_report,
+      created_at: item.created_at,
+    }));
+
+    res.json(results);
+  } catch (err) {
+    console.error("Error fetching contest results:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/get-contest-result/:contestId", async (req, res) => {
+  const {contestId} = req.params;
+
+  if (!contestId) {
+    return res.status(400).json({ error: "Missing contestId" });
+  }
+
+  try {
+    const query = supabase
+      .from("contest_results")
+      .select(`
+        id,
+        contestId,
+        point,
+        analysis_report,
+        created_at,
+        name 
+      `)
+      .eq("contestId", contestId)
+      .order("point", { ascending: false });
 
     const { data, error } = await query;
     if (error) throw error;
@@ -466,6 +504,18 @@ app.post("/logout", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.get("/topic-stats-user", async (req, res) => {
+  try {
+    const { data, error } = await supabase.rpc("get_topic_accuracy_user");
+    if (error) throw error;
+
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch topic stats" });
   }
 });
 

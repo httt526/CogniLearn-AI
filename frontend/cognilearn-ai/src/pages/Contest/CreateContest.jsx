@@ -108,11 +108,13 @@ const CreateContest = ({userInfo}) => {
               placeholder="Điền tên bài kiểm tra"
             />
             <input
-              type="text"
+              type="number"
               value={numberPerTopic}
-              onChange={(e) => setNumberPerTopic(e.target.value)}
+              onChange={(e) => setNumberPerTopic(Number(e.target.value))}
               className="w-full border p-2 rounded mt-1"
               placeholder="Điền số câu hỏi cho mỗi chủ đề"
+              min={1}
+              required
             />
           </div>
 

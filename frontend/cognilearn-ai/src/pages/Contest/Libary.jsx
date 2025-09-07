@@ -16,7 +16,7 @@ const Library = ({ userInfo }) => {
 
   const [search, setSearch] = useState("");
   const [activePage, setActivePage] = useState(1);
-  const pageSize = 20; // mỗi trang tối đa 20 contest
+  const pageSize = 5; // mỗi trang tối đa 20 contest
 
   const fetchLatestContests = async () => {
     try {

@@ -12,6 +12,7 @@ const Contest = ({ userInfo }) => {
   const [questionStartTime, setQuestionStartTime] = useState(Date.now());
   const [timePerQuestion, setTimePerQuestion] = useState({});
   const [doneQuestions, setDoneQuestions] = useState(new Set());
+  const [submitting, setSubmitting] = useState(false);
 
   const userId = userInfo?.id;
 
@@ -113,6 +114,7 @@ const Contest = ({ userInfo }) => {
   };
 
   const handleSubmit = async () => {
+    setSubmitting(true);
     const now = Date.now();
     const lastQ = contest.questions[currentQIndex];
     const timeSpent = Math.floor((now - questionStartTime) / 1000);
@@ -160,8 +162,36 @@ const Contest = ({ userInfo }) => {
       console.log("Tiến trình đã được xóa!");
     } catch (err) {
       console.error("Lỗi khi lưu kết quả hoặc xóa tiến trình:", err);
+    } finally {
+      setSubmitting(false); // 🔹 tắt loading
     }
   };
+
+    if (submitting) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-slate-900">
+        <div className="w-2/3">
+          <p className="text-white text-xl font-semibold text-center mb-4">
+            Đang xử lý kết quả, vui lòng chờ...
+          </p>
+          <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
+            <div className="bg-blue-500 h-3 animate-[progress_2s_linear_infinite]"></div>
+          </div>
+        </div>
+
+        {/* 🔹 Tailwind custom animation */}
+        <style>
+          {`
+            @keyframes progress {
+              0% { width: 0%; }
+              50% { width: 100%; }
+              100% { width: 0%; }
+            }
+          `}
+        </style>
+      </div>
+    );
+  }
 
   if (!contest)
     return (

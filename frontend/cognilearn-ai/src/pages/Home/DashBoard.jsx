@@ -35,7 +35,7 @@ const Dashboard = ({ userInfo }) => {
   // ==================== FETCH DATA ====================
   const fetchTopicStats = async () => {
     try {
-      const res = await axiosInstance.get("/topic-stats");
+      const res = await axiosInstance.get("/topic-stats-user");
       if (res.data) setTopicStats(res.data);
     } catch (err) {
       console.error("Lỗi khi lấy thống kê chủ đề:", err);
