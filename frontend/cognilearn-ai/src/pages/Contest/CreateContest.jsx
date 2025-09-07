@@ -17,7 +17,7 @@ const CreateContest = ({userInfo}) => {
 
   // pagination
   const [activePage, setActivePage] = useState(1);
-  const pageSize = 10; // số topics mỗi trang
+  const pageSize = 5; // số topics mỗi trang
 
   const navigate = useNavigate();
 

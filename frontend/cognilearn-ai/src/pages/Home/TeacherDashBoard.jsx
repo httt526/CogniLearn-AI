@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Layouts/Navbar";
-import { Avatar, Text, Title, Button, Progress, rgba, useMantineTheme, Modal, Table } from "@mantine/core";
+import { Avatar, Text, Title, Button, Progress, rgba, useMantineTheme, Modal, Table, Pagination } from "@mantine/core";
 import { useInterval } from "@mantine/hooks";
 import axiosInstance from "../../utils/axiosInsantce";
 import StatsCard from "../../components/Cards/StatsCard";
@@ -32,6 +32,9 @@ const TeacherDashBoard = ({ userInfo }) => {
   const [contests, setContests] = useState([]);
   const navigate = useNavigate();
   const theme = useMantineTheme();
+
+  const [activePage, setActivePage] = useState(1);
+  const pageSize = 4; // số topics mỗi trang
 
   // ==================== FETCH DATA ====================
   const fetchTopicStats = async () => {
@@ -96,6 +99,10 @@ const TeacherDashBoard = ({ userInfo }) => {
     20
   );
 
+  const startIndex = (activePage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedContests = contests.slice(startIndex, endIndex);
+  
   useEffect(() => {
     if (loaded) setModalOpened(true);
   }, [loaded]);
@@ -151,7 +158,7 @@ const TeacherDashBoard = ({ userInfo }) => {
                 <div className="grid grid-cols-2 gap-4 w-full h-full">
                  <div className="p-5 bg-white shadow rounded-2xl text-[#112D4E]">
                     <Title order={4}>Lịch sử làm bài</Title>
-                    {contests.length > 0 ? (
+                    {paginatedContests.length > 0 ? (
                       <Table
                         highlightOnHover
                         className="mt-3 rounded-lg shadow-sm text-[#112D4E] custom-table"
@@ -164,7 +171,7 @@ const TeacherDashBoard = ({ userInfo }) => {
                         </Table.Thead>
           
                         <Table.Tbody>
-                          {contests.map((contest) => (
+                          {paginatedContests.map((contest) => (
                             <Table.Tr key={contest.id}>
                               <Table.Td
                                 className="cursor-pointer text-[#112D4E] hover:underline"
@@ -190,6 +197,15 @@ const TeacherDashBoard = ({ userInfo }) => {
                       <Text size="sm" color="dimmed" className="mt-3">
                         Bạn chưa có lịch sử làm bài nào
                       </Text>
+                    )}
+                    {contests.length > pageSize && (
+                      <div className="flex justify-center mt-4">
+                        <Pagination
+                          total={Math.ceil(contests.length / pageSize)}
+                          value={activePage}
+                          onChange={setActivePage}
+                        />
+                      </div>
                     )}
                   </div>
                 </div>

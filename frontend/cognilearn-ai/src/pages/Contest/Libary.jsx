@@ -1,4 +1,4 @@
-import { Text, Title, Button, Modal, TextInput, ScrollArea, UnstyledButton, Group, Center, SimpleGrid, Table } from "@mantine/core";
+import { Text, Title, Button, Modal, TextInput, ScrollArea, UnstyledButton, Group, Center, SimpleGrid, Table, Pagination } from "@mantine/core";
 import Navbar from "../../components/Layouts/Navbar";
 import axiosInstance from "../../utils/axiosInsantce";
 import { useNavigate } from "react-router-dom";
@@ -36,18 +36,15 @@ const Library = ({ userInfo }) => {
     }
   };
 
-  // 🔹 Search
   const handleSearchChange = (event) => {
     setSearch(event.currentTarget.value);
     setActivePage(1); // reset về trang đầu khi search
   };
 
-  // 🔹 Lọc data theo search
   const displayedContests = latestContests.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase().trim())
   );
 
-  // 🔹 Pagination
   const startIndex = (activePage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
   const paginatedContest = displayedContests.slice(startIndex, endIndex);
@@ -100,6 +97,15 @@ const Library = ({ userInfo }) => {
             <Text ta="center" fw={500} mt="md">
               Nothing found
             </Text>
+          )}
+          {latestContests.length > pageSize && (
+            <div className="flex justify-center mt-4">
+              <Pagination
+                total={Math.ceil(latestContests.length / pageSize)}
+                value={activePage}
+                onChange={setActivePage}
+              />
+            </div>
           )}
         </div>
 
