@@ -16,6 +16,10 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 const ContestResult = ({ opened, onClose, result }) => {
   if (!result) return null;
@@ -53,7 +57,7 @@ const ContestResult = ({ opened, onClose, result }) => {
         <Tabs.Panel value="overview" pt="md">
           <Card shadow="sm" padding="lg" radius="md" withBorder>
             <Text size="sm" className="whitespace-pre-line">
-              {analysis_report?.human_readable_report || "Chưa có báo cáo"}
+              <ReactMarkdown>{analysis_report?.human_readable_report || "Chưa có báo cáo"}</ReactMarkdown>
             </Text>
 
             {structured.overallPerformance && (
@@ -76,7 +80,7 @@ const ContestResult = ({ opened, onClose, result }) => {
         {/* Hiệu suất theo chủ đề */}
         <Tabs.Panel value="performance" pt="md">
           <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Title order={4}>Hiệu suất theo chủ đề</Title>
+            <Title order={5}>Hiệu suất theo chủ đề</Title>
             {topicData.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={topicData}>
@@ -99,10 +103,10 @@ const ContestResult = ({ opened, onClose, result }) => {
             {structured.cognitiveStrengths?.length > 0 ? (
               <ul className="list-disc list-inside mt-2 space-y-2">
                 {structured.cognitiveStrengths.map((item, idx) => (
-                  <li key={idx}>
-                    <Title order={4}>{item.sub_topic}</Title>{" "}
+                  <div key={idx} className="text-sm">
+                    <Title order={5}>{item.sub_topic}</Title>{" "}
                     – {item.evidence}
-                  </li>
+                  </div>
                 ))}
               </ul>
             ) : (
@@ -117,9 +121,9 @@ const ContestResult = ({ opened, onClose, result }) => {
             {structured.cognitiveWeaknesses ? (
               <>
                 {/* Lỗ hổng kiến thức */}
-                <Text size="sm" weight={500}>
+                <Title order={5}>
                   Lỗ hổng kiến thức:
-                </Text>
+                </Title>
                 {Array.isArray(structured.cognitiveWeaknesses.knowledgeGaps) &&
                 structured.cognitiveWeaknesses.knowledgeGaps.length > 0 ? (
                   <ul className="list-disc list-inside ml-4 text-sm">
@@ -129,7 +133,7 @@ const ContestResult = ({ opened, onClose, result }) => {
                       }
                       return (
                         <li key={idx}>
-                          <strong>{gap.topic}</strong> – {gap.sub_topic} ({gap.difficulty})
+                          <strong>{gap.topic}</strong> {gap.sub_topic} ({gap.difficulty})
                           {gap.notes && (
                             <div className="text-gray-600 text-xs">{gap.notes}</div>
                           )}
@@ -144,9 +148,9 @@ const ContestResult = ({ opened, onClose, result }) => {
                 )}
 
                 {/* Hiểu sai thường gặp */}
-                <Text size="sm" weight={500} className="mt-2">
+                <Title order={5} className="mt-2">
                   Hiểu sai thường gặp:
-                </Text>
+                </Title>
                 {Array.isArray(structured.cognitiveWeaknesses.misconceptions) ? (
                   structured.cognitiveWeaknesses.misconceptions.length > 0 ? (
                     <ul className="list-disc list-inside ml-4 text-sm">
@@ -156,7 +160,7 @@ const ContestResult = ({ opened, onClose, result }) => {
                         }
                         return (
                           <li key={idx}>
-                            <strong>{mis.topic}</strong> – {mis.sub_topic}
+                            <strong>{mis.topic}</strong> {mis.sub_topic}
                             {mis.description && (
                               <div className="text-gray-600 text-xs">{mis.description}</div>
                             )}
@@ -205,13 +209,13 @@ const ContestResult = ({ opened, onClose, result }) => {
         </Tabs.Panel>
 
         {/* Phân tích chi tiết */}
-        <Tabs.Panel value="deepdive" pt="md">
+        <Tabs.Panel value="deepdive" pt="md" remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>
           <div className="space-y-4">
             {structured.deepDiveAnalysis?.map((q, idx) => (
               <Card key={idx} shadow="sm" padding="lg" radius="md" withBorder>
-                <Text weight={500} size="sm" className="mb-2">
+                <Title order={6} className="mb-2">
                   Câu hỏi: {q.content}
-                </Text>
+                </Title>
                 <Text size="sm" color="dimmed">
                   Lỗi: {q.errorClassification}
                 </Text>

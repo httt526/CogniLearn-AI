@@ -67,7 +67,7 @@ const Settings = ({ userInfo }) => {
       <Navbar />
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="w-full max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Cài đặt</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-8">Thiết lập</h1>
 
           {/* Render các component con và truyền props vào */}
           <ProfileSettingsCard
