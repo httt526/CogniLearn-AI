@@ -359,6 +359,23 @@ app.get("/contest-progress/:contestId", async (req, res) => {
   }
 });
 
+app.post("/change-password", async (req, res) => {
+  const { userId, newPassword } = req.body;
+
+  try {
+    const { data, error } = await supabase.auth.admin.updateUserById(
+      userId,
+      { password: newPassword }
+    );
+
+    if (error) throw error;
+    res.json({ success: true, data });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // Lưu hoặc cập nhật tiến độ
 app.post("/contest-progress/:contestId", async (req, res) => {
   const { contestId } = req.params;
@@ -400,7 +417,7 @@ app.post("/signup", async (req, res) => {
       },
     });
     
-    await supabase.from('profiles').insert([{id: data.user.id, name, role, level: 0, classes: null, experiences: [ 
+    await supabase.from('profiles').insert([{id: data.user.id, name, role, address:null, phoneNumber:null, level: 0, classes: null, experiences: [ 
       {"name": "Tư duy logic", "point": 0}, 
       {"name" : "Sự cẩn thận", "point": 0}, 
       {"name" : "Sự kiên trì", "point": 0}, 
@@ -419,6 +436,33 @@ app.post("/signup", async (req, res) => {
   }
 }); 
 
+app.post("/profile-update", async (req, res) => {
+  try {
+    const { userInfo } = req.body;
+
+    if (!userInfo.id) {
+      return res.status(400).json({ error: "Missing userId" });
+    }
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .update({
+        name : userInfo.name,
+        phoneNumber : userInfo.phoneNumber,
+        address : userInfo.address,
+        classes : userInfo.classes,
+      })
+      .eq("id", userInfo.id) // "id" là khóa chính của bảng profiles
+      .select();
+
+    if (error) throw error;
+
+    res.json({ success: true, profile: data[0] });
+  } catch (err) {
+    console.error("Update profile error:", err.message);
+    res.status(500).json({ error: "Failed to update profile" });
+  }
+});
 
 // ---------------- LOGIN ----------------
 app.post("/login", async (req, res) => {
@@ -493,7 +537,8 @@ app.post("/logout", async (req, res) => {
       if (
         error.message.includes("Invalid") ||
         error.message.includes("expired") ||
-        error.message.includes("not found")
+        error.message.includes("not found") || 
+        error.message.includes("missing")
       ) {
         return res.json({ message: "Already logged out (token invalid/expired)" });
       }

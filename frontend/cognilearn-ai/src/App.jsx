@@ -97,7 +97,7 @@ const fetchProfile = useCallback(async () => {
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage/>}/>
-          <Route path="/cogni-chat/:sessionId" element={<CogniChat/>}/>        
+          <Route path="/cogni-chat" element={<CogniChat/>}/>        
           <Route path="/login" element={<Login fetchProfile = {fetchProfile}/>}/>
           <Route path="/signup" element={<Signup fetchProfile = {fetchProfile}/>}/>
           <Route path="/contest/:id" element={<PrivateRoute><Contest userInfo = {userInfo}/></PrivateRoute>}/>
