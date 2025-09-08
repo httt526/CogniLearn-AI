@@ -1,11 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
 @import "tailwindcss";
 
 
 @theme {
-    --font-display: "Urbanist", sans-serif;
+    --font-display: "Lexend";
     --breakpoint-3xl: 1920;
     --color-primary: #FF9324; 
+    --font-family: "Lexend";
+}
+
+.lexend {
+  font-family: "Lexend", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
 }
 
 @layer base {
