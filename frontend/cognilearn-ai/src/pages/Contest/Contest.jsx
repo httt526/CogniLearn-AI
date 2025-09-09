@@ -205,7 +205,7 @@ const Contest = ({ userInfo }) => {
   const optionKeys = Object.keys(currentQuestion.answer_info.options);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 p-4 font-sans">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 p-4 lexend">
       <div className="w-full max-w-4xl bg-[#2d3748] rounded-2xl p-8 shadow-2xl relative">
         <span className="absolute top-6 right-8 text-gray-400 text-sm">
           {currentQIndex + 1} of {contest.questions.length}

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { MantineProvider, Pagination } from '@mantine/core';
 
 const mockNotifications = [
-    { id: 1, title: 'none', date: 'unknown' },
+    { id: 1, title: 'Để sau', date: 'unknown' },
     ...Array.from({ length: 9 }, (_, i) => ({ id: i + 2, title: '', date: '' }))
 ];
 
@@ -22,7 +22,7 @@ const Notifications = () => {
   const totalPages = 10; // Giả sử có 10 trang
 
   return (
-    <div className=' bg-gray-50'>  
+    <div className=' bg-gray-50 lexend'>  
       <main>
         <MantineProvider>
           <div className="flex-1 p-6 ">

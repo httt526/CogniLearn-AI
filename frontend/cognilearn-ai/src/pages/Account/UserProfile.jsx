@@ -22,7 +22,7 @@ const UserProfile = ({ userInfo }) => {
   }));
 
   return (
-    <div className="flex min-h-screen bg-gray-50 text-[#112D4E]">
+    <div className="flex min-h-screen bg-gray-50 lexend text-[#112D4E]">
       <Navbar />
       <main className="flex-1 main-content p-8 overflow-y-auto">
         <div className="w-full h-fit max-w-7xl mx-auto">
@@ -50,8 +50,16 @@ const UserProfile = ({ userInfo }) => {
               </h2>
               <div className="space-y-4">
                 <div>
+                  <p className="text-sm text-[#112D4E]">Liên hệ</p>
+                  <p className="font-semibold text-[#112D4E]">{userInfo.phoneNumber || "Chưa cập nhật số điện thoại"}</p>
+                </div>
+                <div>
                   <p className="text-sm text-[#112D4E]">Lớp</p>
                   <p className="font-semibold text-[#112D4E]">{userInfo.classes || "Chưa tham gia lớp nào"}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-[#112D4E]">Địa chỉ</p>
+                  <p className="font-semibold text-[#112D4E]">{userInfo.address || "Chưa cập nhật địa chỉ"}</p>
                 </div>
                 <div>
                   <p className="text-sm text-[#112D4E]">Ngày tham gia</p>

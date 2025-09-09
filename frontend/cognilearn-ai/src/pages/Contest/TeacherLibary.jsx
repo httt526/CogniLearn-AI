@@ -41,7 +41,7 @@ const TeacherLibrary = ({userInfo}) => {
     <>
     <div className="flex h-screen bg-gray-50">
       <Navbar />
-      <main className="flex-1 p-6 main-content overflow-y-auto">
+      <main className="flex-1 p-6 lexend main-content overflow-y-auto">
         <div className="flex items-center justify-between mb-6 text-xl text-[#112D4E] font-semibold">
           📚 Thư viện
         </div>

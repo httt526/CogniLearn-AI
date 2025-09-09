@@ -122,7 +122,7 @@ const Dashboard = ({ userInfo }) => {
 
   return (
     <>
-      <div className="flex h-fit bg-gray-50">
+      <div className="flex lexend h-fit bg-gray-50">
         {/* NAVBAR */}
         <nav>
           <Navbar />

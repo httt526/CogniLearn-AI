@@ -123,7 +123,7 @@ export default function ChatPage({userInfo}) {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen lexend">
       <Navbar />
 
       {/* Sidebar sessions */}

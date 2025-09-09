@@ -6,7 +6,7 @@ export default function StatsCard({ title, current, total, onContinue }) {
 
   return (
     <div
-      className="bg-white shadow rounded-2xl p-6 border border-gray-200 mt-5 cursor-pointer"
+      className="bg-white shadow rounded-2xl p-6 border border-gray-200 lexend mt-5 cursor-pointer"
       onClick={onContinue}
     >
       {/* Icon */}
@@ -17,7 +17,7 @@ export default function StatsCard({ title, current, total, onContinue }) {
       </div>
 
       {/* Title */}
-      <h2 className="text-center text-lg font-bold text-gray-800">
+      <h2 className="text-center lexend text-lg font-bold text-gray-800">
         Bài tập đang làm
       </h2>
 
@@ -28,7 +28,7 @@ export default function StatsCard({ title, current, total, onContinue }) {
       </div>
 
       {/* Mantine Progress phải bọc trong div và dùng style */}
-      <div style={{ marginTop: '8px' }}>
+      <div className="lexend" style={{ marginTop: '8px' }}>
         <Progress
           value={progress}
           color={progress > 66 ? 'green' : progress > 33 ? 'yellow' : 'red'}
@@ -38,7 +38,7 @@ export default function StatsCard({ title, current, total, onContinue }) {
       </div>
 
       {/* Stats */}
-      <div className="flex justify-between items-center mt-4">
+      <div className="flex lexend justify-between items-center mt-4">
         <p className="text-sm text-gray-800">
           {current} / {total}
         </p>
