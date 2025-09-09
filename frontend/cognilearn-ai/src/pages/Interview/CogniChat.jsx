@@ -81,11 +81,15 @@ export default function ChatPage({userInfo}) {
         "https://cloudvn.tino.page/webhook/3361c577-2f5c-440f-9191-6020fce3f636/chat",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "userID" : userId
+           },
           body: JSON.stringify({
             action: "sendMessage",
             chatInput: input,
             sessionId,
+            variables: {userId}
           }),
         }
       );
