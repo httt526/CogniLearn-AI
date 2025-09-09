@@ -33,7 +33,7 @@ const Standing = ({}) => {
   return (
     <div>
         <Navbar />
-        <div className="p-5 bg-white shadow rounded-2xl mb-6 text-[#112D4E] main-content">
+        <div className="p-5 bg-white shadow lexend rounded-2xl mb-6 text-[#112D4E] main-content">
         <Title order={4}>Bảng xếp hạng của {name}</Title>
         {contestResults.length > 0 ? (
           <Table

@@ -56,7 +56,7 @@ const Library = ({ userInfo }) => {
   }, [userInfo]);
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex lexend h-screen bg-gray-50">
       {/* 🔹 Sidebar */}
       <Navbar />
 

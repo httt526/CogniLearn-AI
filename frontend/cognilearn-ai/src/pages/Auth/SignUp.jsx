@@ -36,7 +36,7 @@ const SignUp = () => {
   }, [navigate]);
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center lexend items-center h-screen">
       <div className="w-96 p-6 border rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
 

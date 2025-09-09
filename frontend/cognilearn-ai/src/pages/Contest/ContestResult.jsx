@@ -43,126 +43,100 @@ const ContestResult = ({ opened, onClose, result }) => {
 
 
   return (
-      <Tabs defaultValue="overview">
-        <Tabs.List grow>
-          <Tabs.Tab value="overview">Tổng quan</Tabs.Tab>
-          <Tabs.Tab value="performance">Hiệu suất</Tabs.Tab>
-          <Tabs.Tab value="strengths">Điểm mạnh</Tabs.Tab>
-          <Tabs.Tab value="weaknesses">Điểm yếu</Tabs.Tab>
-          <Tabs.Tab value="recommendations">Đề xuất</Tabs.Tab>
-          <Tabs.Tab value="deepdive">Phân tích chi tiết</Tabs.Tab>
-        </Tabs.List>
-
-        {/* Tổng quan */}
-        <Tabs.Panel value="overview" pt="md">
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Text size="sm" className="whitespace-pre-line">
-              <ReactMarkdown>{analysis_report?.human_readable_report || "Chưa có báo cáo"}</ReactMarkdown>
-            </Text>
-
-            {structured.overallPerformance && (
-              <Group mt="md" spacing="xl">
-                <Badge color="green" size="lg">
-                  Đúng: {structured.overallPerformance.correctAnswers}/
-                  {structured.overallPerformance.totalQuestions}
-                </Badge>
-                <Badge color="blue" size="lg">
-                  Tỉ lệ chính xác: {structured.overallPerformance.accuracyRate}
-                </Badge>
-                <Badge color="purple" size="lg">
-                  Thời gian TB: {structured.overallPerformance.averageTimePerQuestion}s
-                </Badge>
-              </Group>
-            )}
-          </Card>
-        </Tabs.Panel>
-
-        {/* Hiệu suất theo chủ đề */}
-        <Tabs.Panel value="performance" pt="md">
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Title order={5}>Hiệu suất theo chủ đề</Title>
-            {topicData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={topicData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="topic" />
-                  <YAxis domain={[0, 100]} />
-                  <Tooltip />
-                  <Bar dataKey="accuracy" fill="#4F46E5" />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <Text size="sm">Chưa có dữ liệu</Text>
-            )}
-          </Card>
-        </Tabs.Panel>
-
-        {/* Điểm mạnh */}
-        <Tabs.Panel value="strengths" pt="md">
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
-            {structured.cognitiveStrengths?.length > 0 ? (
-              <ul className="list-disc list-inside mt-2 space-y-2">
-                {structured.cognitiveStrengths.map((item, idx) => (
-                  <div key={idx} className="text-sm">
-                    <Title order={5}>{item.sub_topic}</Title>{" "}
-                    – {item.evidence}
-                  </div>
-                ))}
-              </ul>
-            ) : (
-              <Text size="sm">Chưa có dữ liệu</Text>
-            )}
-          </Card>
-        </Tabs.Panel>
-
-        {/* Điểm yếu */}
-        <Tabs.Panel value="weaknesses" pt="md">
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
-            {structured.cognitiveWeaknesses ? (
-              <>
-                {/* Lỗ hổng kiến thức */}
-                <Title order={5}>
-                  Lỗ hổng kiến thức:
-                </Title>
-                {Array.isArray(structured.cognitiveWeaknesses.knowledgeGaps) &&
-                structured.cognitiveWeaknesses.knowledgeGaps.length > 0 ? (
-                  <ul className="list-disc list-inside ml-4 text-sm">
-                    {structured.cognitiveWeaknesses.knowledgeGaps.map((gap, idx) => {
-                      if (typeof gap === "string") {
-                        return <li key={idx}>{gap}</li>;
-                      }
-                      return (
-                        <li key={idx}>
-                          <strong>{gap.topic}</strong> {gap.sub_topic} ({gap.difficulty})
-                          {gap.notes && (
-                            <div className="text-gray-600 text-xs">{gap.notes}</div>
-                          )}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                ) : (
-                  <Text size="sm" className="ml-4 text-gray-600">
-                    Không có lỗ hổng kiến thức
-                  </Text>
-                )}
-
-                {/* Hiểu sai thường gặp */}
-                <Title order={5} className="mt-2">
-                  Hiểu sai thường gặp:
-                </Title>
-                {Array.isArray(structured.cognitiveWeaknesses.misconceptions) ? (
-                  structured.cognitiveWeaknesses.misconceptions.length > 0 ? (
+      <div className="lexend">
+        <Tabs defaultValue="overview">
+          <Tabs.List grow>
+            <Tabs.Tab value="overview">Tổng quan</Tabs.Tab>
+            <Tabs.Tab value="performance">Hiệu suất</Tabs.Tab>
+            <Tabs.Tab value="strengths">Điểm mạnh</Tabs.Tab>
+            <Tabs.Tab value="weaknesses">Điểm yếu</Tabs.Tab>
+            <Tabs.Tab value="recommendations">Đề xuất</Tabs.Tab>
+            <Tabs.Tab value="deepdive">Phân tích chi tiết</Tabs.Tab>
+          </Tabs.List>
+  
+          {/* Tổng quan */}
+          <Tabs.Panel value="overview" pt="md">
+            <Card shadow="sm" padding="lg" radius="md" withBorder>
+              <Text size="sm" className="whitespace-pre-line">
+                <ReactMarkdown>{analysis_report?.human_readable_report || "Chưa có báo cáo"}</ReactMarkdown>
+              </Text>
+  
+              {structured.overallPerformance && (
+                <Group mt="md" spacing="xl">
+                  <Badge color="green" size="lg">
+                    Đúng: {structured.overallPerformance.correctAnswers}/
+                    {structured.overallPerformance.totalQuestions}
+                  </Badge>
+                  <Badge color="blue" size="lg">
+                    Tỉ lệ chính xác: {structured.overallPerformance.accuracyRate}
+                  </Badge>
+                  <Badge color="purple" size="lg">
+                    Thời gian TB: {structured.overallPerformance.averageTimePerQuestion}s
+                  </Badge>
+                </Group>
+              )}
+            </Card>
+          </Tabs.Panel>
+  
+          {/* Hiệu suất theo chủ đề */}
+          <Tabs.Panel value="performance" pt="md">
+            <Card shadow="sm" padding="lg" radius="md" withBorder>
+              <Title order={5}>Hiệu suất theo chủ đề</Title>
+              {topicData.length > 0 ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={topicData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="topic" />
+                    <YAxis domain={[0, 100]} />
+                    <Tooltip />
+                    <Bar dataKey="accuracy" fill="#4F46E5" />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <Text size="sm">Chưa có dữ liệu</Text>
+              )}
+            </Card>
+          </Tabs.Panel>
+  
+          {/* Điểm mạnh */}
+          <Tabs.Panel value="strengths" pt="md">
+            <Card shadow="sm" padding="lg" radius="md" withBorder>
+              {structured.cognitiveStrengths?.length > 0 ? (
+                <ul className="list-disc list-inside mt-2 space-y-2">
+                  {structured.cognitiveStrengths.map((item, idx) => (
+                    <div key={idx} className="text-sm">
+                      <Title order={5}>{item.sub_topic}</Title>{" "}
+                      – {item.evidence}
+                    </div>
+                  ))}
+                </ul>
+              ) : (
+                <Text size="sm">Chưa có dữ liệu</Text>
+              )}
+            </Card>
+          </Tabs.Panel>
+  
+          {/* Điểm yếu */}
+          <Tabs.Panel value="weaknesses" pt="md">
+            <Card shadow="sm" padding="lg" radius="md" withBorder>
+              {structured.cognitiveWeaknesses ? (
+                <>
+                  {/* Lỗ hổng kiến thức */}
+                  <Title order={5}>
+                    Lỗ hổng kiến thức:
+                  </Title>
+                  {Array.isArray(structured.cognitiveWeaknesses.knowledgeGaps) &&
+                  structured.cognitiveWeaknesses.knowledgeGaps.length > 0 ? (
                     <ul className="list-disc list-inside ml-4 text-sm">
-                      {structured.cognitiveWeaknesses.misconceptions.map((mis, idx) => {
-                        if (typeof mis === "string") {
-                          return <li key={idx}>{mis}</li>;
+                      {structured.cognitiveWeaknesses.knowledgeGaps.map((gap, idx) => {
+                        if (typeof gap === "string") {
+                          return <li key={idx}>{gap}</li>;
                         }
                         return (
                           <li key={idx}>
-                            <strong>{mis.topic}</strong> {mis.sub_topic}
-                            {mis.description && (
-                              <div className="text-gray-600 text-xs">{mis.description}</div>
+                            <strong>{gap.topic}</strong> {gap.sub_topic} ({gap.difficulty})
+                            {gap.notes && (
+                              <div className="text-gray-600 text-xs">{gap.notes}</div>
                             )}
                           </li>
                         );
@@ -170,66 +144,94 @@ const ContestResult = ({ opened, onClose, result }) => {
                     </ul>
                   ) : (
                     <Text size="sm" className="ml-4 text-gray-600">
-                      Không có quan niệm sai lầm
+                      Không có lỗ hổng kiến thức
                     </Text>
-                  )
-                ) : typeof structured.cognitiveWeaknesses.misconceptions === "string" ? (
-                  <Text size="sm" className="ml-4 text-gray-600">
-                    {structured.cognitiveWeaknesses.misconceptions}
+                  )}
+  
+                  {/* Hiểu sai thường gặp */}
+                  <Title order={5} className="mt-2">
+                    Hiểu sai thường gặp:
+                  </Title>
+                  {Array.isArray(structured.cognitiveWeaknesses.misconceptions) ? (
+                    structured.cognitiveWeaknesses.misconceptions.length > 0 ? (
+                      <ul className="list-disc list-inside ml-4 text-sm">
+                        {structured.cognitiveWeaknesses.misconceptions.map((mis, idx) => {
+                          if (typeof mis === "string") {
+                            return <li key={idx}>{mis}</li>;
+                          }
+                          return (
+                            <li key={idx}>
+                              <strong>{mis.topic}</strong> {mis.sub_topic}
+                              {mis.description && (
+                                <div className="text-gray-600 text-xs">{mis.description}</div>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    ) : (
+                      <Text size="sm" className="ml-4 text-gray-600">
+                        Không có quan niệm sai lầm
+                      </Text>
+                    )
+                  ) : typeof structured.cognitiveWeaknesses.misconceptions === "string" ? (
+                    <Text size="sm" className="ml-4 text-gray-600">
+                      {structured.cognitiveWeaknesses.misconceptions}
+                    </Text>
+                  ) : (
+                    <Text size="sm" className="ml-4 text-gray-600">
+                      Không có dữ liệu
+                    </Text>
+                  )}
+                </>
+              ) : (
+                <Text size="sm">Chưa có dữ liệu</Text>
+              )}
+            </Card>
+          </Tabs.Panel>
+  
+  
+  
+          {/* Đề xuất */}
+          <Tabs.Panel value="recommendations" pt="md">
+            <Card shadow="sm" padding="lg" radius="md" withBorder>
+              {structured.actionableRecommendations?.length > 0 ? (
+                <ul className="list-disc list-inside mt-2 space-y-1">
+                  {structured.actionableRecommendations.map((rec, idx) => (
+                    <li key={idx} className="text-sm">
+                      {rec}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <Text size="sm">Chưa có dữ liệu</Text>
+              )}
+            </Card>
+          </Tabs.Panel>
+  
+          {/* Phân tích chi tiết */}
+          <Tabs.Panel value="deepdive" pt="md" remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>
+            <div className="space-y-4">
+              {structured.deepDiveAnalysis?.map((q, idx) => (
+                <Card key={idx} shadow="sm" padding="lg" radius="md" withBorder>
+                  <Title order={6} className="mb-2">
+                    Câu hỏi: {q.content}
+                  </Title>
+                  <Text size="sm" color="dimmed">
+                    Lỗi: {q.errorClassification}
                   </Text>
-                ) : (
-                  <Text size="sm" className="ml-4 text-gray-600">
-                    Không có dữ liệu
+                  <Text size="sm">
+                    Kỹ năng cần cải thiện: {q.keySkillFailure}
                   </Text>
-                )}
-              </>
-            ) : (
-              <Text size="sm">Chưa có dữ liệu</Text>
-            )}
-          </Card>
-        </Tabs.Panel>
-
-
-
-        {/* Đề xuất */}
-        <Tabs.Panel value="recommendations" pt="md">
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
-            {structured.actionableRecommendations?.length > 0 ? (
-              <ul className="list-disc list-inside mt-2 space-y-1">
-                {structured.actionableRecommendations.map((rec, idx) => (
-                  <li key={idx} className="text-sm">
-                    {rec}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <Text size="sm">Chưa có dữ liệu</Text>
-            )}
-          </Card>
-        </Tabs.Panel>
-
-        {/* Phân tích chi tiết */}
-        <Tabs.Panel value="deepdive" pt="md" remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>
-          <div className="space-y-4">
-            {structured.deepDiveAnalysis?.map((q, idx) => (
-              <Card key={idx} shadow="sm" padding="lg" radius="md" withBorder>
-                <Title order={6} className="mb-2">
-                  Câu hỏi: {q.content}
-                </Title>
-                <Text size="sm" color="dimmed">
-                  Lỗi: {q.errorClassification}
-                </Text>
-                <Text size="sm">
-                  Kỹ năng cần cải thiện: {q.keySkillFailure}
-                </Text>
-                <Text size="sm" className="italic">
-                  Suy nghĩ của HS: {q.probableThoughtProcess}
-                </Text>
-              </Card>
-            ))}
-          </div>
-        </Tabs.Panel>
-      </Tabs>
+                  <Text size="sm" className="italic">
+                    Suy nghĩ của HS: {q.probableThoughtProcess}
+                  </Text>
+                </Card>
+              ))}
+            </div>
+          </Tabs.Panel>
+        </Tabs>
+      </div>
   );
 };
 
