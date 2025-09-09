@@ -21,6 +21,7 @@ import CogniChat from './pages/Interview/CogniChat';
 import TeacherLibrary from './pages/Contest/TeacherLibary';
 import Standing from './pages/Contest/Standing';
 import LoaderPage from './components/Loader/LoaderPage';
+import Orientation from './pages/Interview/Orientation';
 
 const App = () => {
   const [userInfo, SetUserInfo] = useState(null);
@@ -100,7 +101,8 @@ const fetchProfile = useCallback(async () => {
           <Route path="/" element={<LandingPage/>}/>
           <Route path="/loader" element={<LoaderPage />} />
           <Route path="/landing" element={<LandingPage/>}/>
-          <Route path="/cogni-chat/:sessionId" element={<CogniChat userInfo={userInfo}/>}/>        
+          <Route path="/cogni-chat/:sessionId" element={<CogniChat userInfo={userInfo}/>}/>      
+          <Route path="/orientation/:sessionId" element={<Orientation userInfo={userInfo}/>}/>     
           <Route path="/login" element={<Login fetchProfile = {fetchProfile}/>}/>
           <Route path="/signup" element={<Signup fetchProfile = {fetchProfile}/>}/>
           <Route path="/contest/:id" element={<PrivateRoute><Contest userInfo = {userInfo}/></PrivateRoute>}/>
@@ -116,10 +118,10 @@ const fetchProfile = useCallback(async () => {
             <PrivateRoute>
               {<UserProfile userInfo={userInfo}/>}
             </PrivateRoute>
-          }
+          } 
         />
           <Route
-            path="/libary"
+            path="/library"
             element={
             <PrivateRoute>
               {userInfo?.role ===  "student" ? (<Libary userInfo={userInfo}/>) : (<TeacherLibrary userInfo={userInfo}/>)}
