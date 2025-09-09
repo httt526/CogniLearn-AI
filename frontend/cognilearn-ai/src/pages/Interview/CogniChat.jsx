@@ -127,24 +127,24 @@ export default function ChatPage({userInfo}) {
       <Navbar />
 
       {/* Sidebar sessions */}
-      <div className="w-64 bg-gray-900 text-white flex flex-col main-content">
-        <div className="p-4 flex justify-between items-center border-b border-gray-700">
-          <span className="font-bold">Sessions</span>
+      <div className="w-72 overflow-hidden bg-gray-900 text-white flex flex-col main-content">
+        <div className="flex justify-between items-center mb-6 flex-shrink-0">
+          <span className="text-xl font-bold">Sessions</span>
           <button
             onClick={createSession}
-            className="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded text-sm"
+            className="p-2 rounded-lg bg-[#0367B0] hover:bg-[#C6E7FF] hover:text-[#112D4E] transition-colors"
           >
             +
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-grow overflow-y-auto -mr-2 pr-2">
           {Array.isArray(sessions) &&
             sessions.map((s) => (
               <div
                 key={s.id}
                 onClick={() => navigate(`/cogni-chat/${s.id}`)}
-                className={`px-4 py-2 cursor-pointer hover:bg-gray-700 ${
-                  s.id === sessionId ? "bg-gray-700 font-semibold text-white" : ""
+                className={`block cursor-pointer w-full text-left px-4 py-3 m1-1 mb-1 rounded-lg text-sm transition-colors ${
+                  s.id === sessionId ? "bg-[#C6E7FF] text-[#112D4E] font-semibold" : "hover:bg-[#C6E7FF] hover:text-[#112D4E]"
                 }`}
               >
                 {s.title || "New Chat"}
@@ -156,19 +156,19 @@ export default function ChatPage({userInfo}) {
 
       {/* Chat box */}
       <div className="flex-1 flex flex-col bg-gray-100">
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <div className="flex-1 p-7 overflow-y-auto space-y-3">
           {messages.map((m, i) => (
             <div
               key={i}
               className={`flex ${
                 m.sender === "user" ? "justify-end" : "justify-start"
-              }`}
+              } mb-4`}
             >
               <div
-                className={`px-4 py-2 rounded-xl max-w-[70%] text-sm ${
+                className={`max-w-xl overflow-x-auto px-4 py-3 rounded-xl shadow-md  ${
                   m.sender === "user"
-                    ? "bg-blue-600 text-white rounded-br-none"
-                    : "bg-gray-200 text-gray-800 rounded-bl-none"
+                    ? "bg-[#0367B0] text-white rounded-br-none"
+                    : "bg-white text-[#112D4E] text-sm leading-relaxed rounded-bl-none"
                 }`}
               >
                 <Markdown
@@ -191,20 +191,22 @@ export default function ChatPage({userInfo}) {
         </div>
 
         {/* Input */}
-        <div className="border-t p-3 flex items-center gap-2 bg-white">
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Nhập tin nhắn..."
-            className="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          />
-          <button
-            onClick={sendMessage}
-            className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition"
-          >
-            Gửi
-          </button>
+        <div className="p-4 bg-white border-t border-gray-200">
+          <div className="relative">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Nhập tin nhắn..."
+              className="w-full pl-5 pr-28 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0367B0] transition"
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            />
+            <button
+              onClick={sendMessage}
+              className="absolute top-1/2 right-2 cursor-pointer transform -translate-y-1/2 bg-[#0367B0] text-white font-semibold py-2 px-5 rounded-full hover:bg-[#C6E7FF] hover:text-[#112D4E] transition-colors"
+            >
+              Gửi
+            </button>
+          </div>
         </div>
       </div>
     </div>
