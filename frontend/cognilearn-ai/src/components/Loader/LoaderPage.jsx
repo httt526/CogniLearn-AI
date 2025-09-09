@@ -7,7 +7,7 @@ const LoaderPage = () => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            navigate('/libary'); // Sau 10s, chuyển hướng
+            navigate('/library'); // Sau 10s, chuyển hướng
         }, 10000);
 
         return () => clearTimeout(timer); // Cleanup timer

@@ -12,15 +12,16 @@ import CreateContest from './pages/Contest/CreateContest';
 import ContestResult from './pages/Contest/ContestResult';
 import PrivateRoute from './components/PrivateRoute';
 import axiosInstance from './utils/axiosInsantce';
-import Libary from './pages/Contest/Libary';
+import Library from './pages/Contest/Library';
 import TeacherDashboard from './pages/Home/TeacherDashBoard';
 import UserProfile from './pages/Account/UserProfile';
 import Setting from './pages/Setting/Setting';
 import Notifications from './pages/Home/Notifications';
 import CogniChat from './pages/Interview/CogniChat';
-import TeacherLibrary from './pages/Contest/TeacherLibary';
+import TeacherLibrary from './pages/Contest/TeacherLibrary';
 import Standing from './pages/Contest/Standing';
 import LoaderPage from './components/Loader/LoaderPage';
+import Orientation from './pages/Interview/Orientation';
 
 const App = () => {
   const [userInfo, SetUserInfo] = useState(null);
@@ -100,7 +101,8 @@ const fetchProfile = useCallback(async () => {
           <Route path="/" element={<LandingPage/>}/>
           <Route path="/loader" element={<LoaderPage />} />
           <Route path="/landing" element={<LandingPage/>}/>
-          <Route path="/cogni-chat/:sessionId" element={<CogniChat userInfo={userInfo}/>}/>        
+          <Route path="/cogni-chat/:sessionId" element={<CogniChat userInfo={userInfo}/>}/>      
+          <Route path="/orientation/:sessionId" element={<Orientation userInfo={userInfo}/>}/>     
           <Route path="/login" element={<Login fetchProfile = {fetchProfile}/>}/>
           <Route path="/signup" element={<Signup fetchProfile = {fetchProfile}/>}/>
           <Route path="/contest/:id" element={<PrivateRoute><Contest userInfo = {userInfo}/></PrivateRoute>}/>
@@ -116,13 +118,13 @@ const fetchProfile = useCallback(async () => {
             <PrivateRoute>
               {<UserProfile userInfo={userInfo}/>}
             </PrivateRoute>
-          }
+          } 
         />
           <Route
-            path="/libary"
+            path="/library"
             element={
             <PrivateRoute>
-              {userInfo?.role ===  "student" ? (<Libary userInfo={userInfo}/>) : (<TeacherLibrary userInfo={userInfo}/>)}
+              {userInfo?.role ===  "student" ? (<Library userInfo={userInfo}/>) : (<TeacherLibrary userInfo={userInfo}/>)}
             </PrivateRoute>
           } />
 

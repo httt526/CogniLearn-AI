@@ -86,8 +86,26 @@ const Dashboard = ({ userInfo }) => {
     20
   );
 
+  const handleOrientation = async () => {
+    try {
+    
+      const res = await axiosInstance.get(`/sessions/last/${userInfo.id}`)
+
+      if (res.data?.id) {
+  
+        navigate(`/orientation/${res.data.id}`);
+      } else {
+        
+        const newRes = await axiosInstance.post(`/sessions/${userInfo.id}`);
+        navigate(`/orientation/${newRes.data.id}`);
+      }
+    } catch (err) {
+      console.error("Không lấy được session:", err);
+    }
+  }
+
   useEffect(() => {
-    if (loaded) setModalOpened(true);
+    if (loaded) handleOrientation();
   }, [loaded]);
 
   const handleCloseModal = () => setModalOpened(false);
