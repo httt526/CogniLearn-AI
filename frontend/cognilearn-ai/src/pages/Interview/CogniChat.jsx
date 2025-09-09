@@ -3,6 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Layouts/Navbar";
 import axiosInstance from "../../utils/axiosInsantce";
 import Markdown from "react-markdown";
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 const API_BASE = "http://localhost:8000"; // đổi thành API backend của bạn
 
@@ -168,7 +171,12 @@ export default function ChatPage({userInfo}) {
                     : "bg-gray-200 text-gray-800 rounded-bl-none"
                 }`}
               >
-                <Markdown>{m.content}</Markdown>
+                <Markdown
+                  remarkPlugins={[remarkGfm, remarkMath]}
+                  rehypePlugins={[rehypeKatex]}
+                >
+                  {m.content}
+                </Markdown>
               </div>
             </div>
           ))}

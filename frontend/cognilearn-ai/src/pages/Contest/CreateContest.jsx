@@ -126,7 +126,7 @@ const CreateContest = ({userInfo}) => {
   const totalPages = Math.ceil(filteredTopics.length / pageSize);
 
   return (
-    <div className="bg-gray-50 overflow-hidden mt-4 min-h-screen-102vh">
+    <div className="bg-gray-50 overflow-hidden mt-4 lexend min-h-screen-102vh">
       <nav>
         <Navbar />
       </nav>
