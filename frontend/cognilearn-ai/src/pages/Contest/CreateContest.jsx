@@ -5,11 +5,31 @@ import Navbar from "../../components/Layouts/Navbar";
 import { TextInput, ScrollArea, Table, Text, UnstyledButton, Group, Center, Pagination } from "@mantine/core";
 import { IconSearch, IconChevronDown, IconChevronUp, IconSelector } from "@tabler/icons-react";
 
+const TopicCard = ({ topic, isSelected, onSelect }) => (
+    <div
+        onClick={() => onSelect(topic.question_id)}
+        className={`px-4 py-5 rounded-lg border-2 cursor-pointer transition-all duration-200 flex items-center justify-between ${
+            isSelected
+                ? 'bg-[#C6E7FF] border-[#0367B0]'
+                : 'bg-white border-gray-200 hover:border-[#0367B0] hover:bg-gray-50'
+        }`}
+    >
+        <p className={`font-medium text-sm ${isSelected ? 'text-[#112D4E]' : 'text-gray-700'}`}>{topic.topics}</p>
+        <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center border-2 ml-3 ${isSelected ? 'bg-[#0367B0] border-[#0367B0]' : 'border-gray-300'}`}>
+            {isSelected && (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+            )}
+        </div>
+    </div>
+);
+
 const CreateContest = ({userInfo}) => {
   const [contestName, setContestName] = useState("");
   const [topics, setTopics] = useState([]);
   const [filteredTopics, setFilteredTopics] = useState([]);
-  const [selectedTopics, setSelectedTopics] = useState([]);
+  const [selectedTopics, setSelectedTopics] = useState(new Set());;
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("topics");
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
@@ -17,7 +37,7 @@ const CreateContest = ({userInfo}) => {
 
   // pagination
   const [activePage, setActivePage] = useState(1);
-  const pageSize = 5; // số topics mỗi trang
+  const pageSize = 8; // số topics mỗi trang
 
   const navigate = useNavigate();
 
@@ -62,25 +82,41 @@ const CreateContest = ({userInfo}) => {
     setFilteredTopics(sorted);
   };
 
-  const handleSelectTopic = (id) => {
-    setSelectedTopics((prev) =>
-      prev.includes(id) ? prev.filter((q) => q !== id) : [...prev, id]
-    );
+  const handleSelectTopic = (topicId) => {
+      setSelectedTopics(prev => {
+          const newSet = new Set(prev);
+          if (newSet.has(topicId)) {
+              newSet.delete(topicId);
+          } else {
+              newSet.add(topicId);
+          }
+          return newSet;
+      });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!contestName.trim()) {
+        alert("Vui lòng nhập tên bài kiểm tra!");
+        return;
+    }
+    if (selectedTopics.size === 0) {
+        alert("Vui lòng chọn ít nhất một chủ đề!");
+        return;
+    }
+
     try {
-      await axiosInstance.post("/create-contest", {
-        name: contestName,
-        topics: selectedTopics,
-        author: userInfo
-      });
-      alert("Contest created successfully!");
-      navigate("/");
+        await axiosInstance.post("/create-contest", {
+            name: contestName,
+            // Chuyển Set thành Array trước khi gửi đi
+            topics: Array.from(selectedTopics),
+            author: userInfo,
+            numberPerTopic: numberPerTopic // Gửi thêm số lượng câu hỏi
+        });
+        alert("Contest created successfully!");
+        navigate("/");
     } catch (error) {
-      console.error("Error creating contest:", error);
-      alert("Failed to create contest!");
+        console.error("Error creating contest:", error);
+        alert("Failed to create contest!");
     }
   };
 
@@ -88,120 +124,121 @@ const CreateContest = ({userInfo}) => {
   const startIndex = (activePage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
   const paginatedTopics = filteredTopics.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filteredTopics.length / pageSize);
 
   return (
-    <div>
+    <div className="bg-gray-50 overflow-hidden mt-4 min-h-screen-102vh">
       <nav>
         <Navbar />
       </nav>
-      <main className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-md main-content">
-        <h2 className="text-2xl font-bold mb-4">Create Contest</h2>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block font-medium">Contest Name</label>
-            <input
-              type="text"
-              value={contestName}
-              onChange={(e) => setContestName(e.target.value)}
-              className="w-full border p-2 rounded mt-1"
-              placeholder="Điền tên bài kiểm tra"
-            />
-            <input
-              type="number"
-              value={numberPerTopic}
-              onChange={(e) => setNumberPerTopic(Number(e.target.value))}
-              className="w-full border p-2 rounded mt-1"
-              placeholder="Điền số câu hỏi cho mỗi chủ đề"
-              min={1}
-              required
-            />
+      <main className="max-w-8xl mx-auto p-4 sm:p-8 main-content">
+        <div className="container mx-auto">
+          <div className="mb-8">
+              <h1 className="text-3xl font-bold text-[#112D4E]">Tạo bài kiểm tra mới</h1>
+              <div className="w-24 h-1 bg-[#0367B0] mt-2 rounded-full"></div>
           </div>
 
-          <TextInput
-          placeholder="Search topics..."
-          mb="md"
-          leftSection={<IconSearch size={16} stroke={1.5} />}
-          value={search}
-          onChange={handleSearchChange}
-        />
-
-          {/* Topics List */}
-          <div>
-            <label className="block font-medium mb-2">Select Topics</label>
-            <ScrollArea className="max-h-64 border rounded">
-              <Table highlightOnHover>
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th>
-                      <UnstyledButton onClick={() => handleSort("topics")}>
-                        <Group justify="space-between">
-                          <Text fw={500} fz="sm">Topic</Text>
-                          <Center>
-                            {sortBy === "topics" ? (
-                              reverseSortDirection ? (
-                                <IconChevronUp size={16} />
-                              ) : (
-                                <IconChevronDown size={16} />
-                              )
-                            ) : (
-                              <IconSelector size={16} />
-                            )}
-                          </Center>
-                        </Group>
-                      </UnstyledButton>
-                    </Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-
-                <Table.Tbody>
-                  {paginatedTopics.length > 0 ? (
-                    paginatedTopics.map((q) => (
-                      <Table.Tr key={q.question_id}>
-                        <Table.Td>
-                          <div className="flex items-center">
-                            <input
-                              type="checkbox"
-                              checked={selectedTopics.includes(q.question_id)}
-                              onChange={() => handleSelectTopic(q.question_id)}
-                              className="mr-2"
-                            />
-                            {q.topics}
+          <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {/* Cột thông tin bên trái */}
+                  <div className="lg:col-span-1 bg-white rounded-xl shadow-lg h-fit overflow-hidden border border-gray-200">
+                      <div className="bg-[#0367B0] p-4">
+                          <h2 className="text-lg font-semibold text-white">Thông tin</h2>
+                      </div>
+                      <div className="p-6">
+                          <div className="space-y-6">
+                              <div>
+                                  <label htmlFor="contest-name" className="block text-sm font-medium text-[#112D4E] mb-2">Tên bài kiểm tra</label>
+                                  <input
+                                      type="text"
+                                      id="contest-name"
+                                      value={contestName}
+                                      onChange={(e) => setContestName(e.target.value)}
+                                      placeholder="Ví dụ: Kiểm tra giữa kì I"
+                                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0367B0] transition"
+                                      required
+                                  />
+                              </div>
+                              <div>
+                                  <label htmlFor="question-count" className="block text-sm font-medium text-[#112D4E] mb-2">Số câu hỏi mỗi chủ đề</label>
+                                  <input
+                                      type="number"
+                                      id="question-count"
+                                      value={numberPerTopic}
+                                      onChange={(e) => setNumberPerTopic(Number(e.target.value))}
+                                      min="1"
+                                      onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()}
+                                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0367B0] transition"
+                                      required
+                                  />
+                              </div>
+                              <div>
+                                  <label htmlFor="search-topics" className="block text-sm font-medium text-[#112D4E] mb-2">Tìm kiếm chủ đề</label>
+                                  <div className="relative">
+                                      <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                          <IconSearch />
+                                      </span>
+                                      <input
+                                          type="search"
+                                          id="search-topics"
+                                          value={search}
+                                          onChange={handleSearchChange}
+                                          placeholder="Nhập tên chủ đề..."
+                                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C6E7FF] focus:border-[#0367B0] transition"
+                                      />
+                                  </div>
+                              </div>
                           </div>
-                        </Table.Td>
-                      </Table.Tr>
-                    ))
-                  ) : (
-                    <Table.Tr>
-                      <Table.Td>
-                        <Text ta="center" fw={500}>Nothing found</Text>
-                      </Table.Td>
-                    </Table.Tr>
-                  )}
-                </Table.Tbody>
-              </Table>
-            </ScrollArea>
+                      </div>
+                  </div>
 
-            {/* Pagination */}
-            {filteredTopics.length > pageSize && (
-              <div className="flex justify-center mt-4">
-                <Pagination
-                  total={Math.ceil(filteredTopics.length / pageSize)}
-                  value={activePage}
-                  onChange={setActivePage}
-                />
+                  {/* Lưới chọn chủ đề bên phải */}
+                  <div className="lg:col-span-2 bg-white rounded-xl shadow-lg flex flex-col overflow-hidden border border-gray-200">
+                      <div className="bg-[#0367B0] p-4">
+                          <h2 className="text-lg font-semibold text-white">Chọn chủ đề ({selectedTopics.size})</h2>
+                      </div>
+
+                      <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto p-6" style={{ minHeight: '400px' }}>
+                          {paginatedTopics.length > 0 ? (
+                              paginatedTopics.map((topic) => (
+                                  <TopicCard
+                                      key={topic.question_id}
+                                      topic={topic}
+                                      isSelected={selectedTopics.has(topic.question_id)}
+                                      onSelect={handleSelectTopic}
+                                  />
+                              ))
+                          ) : (
+                              <div className="md:col-span-2 flex items-center justify-center text-gray-500">
+                                  Không tìm thấy chủ đề nào.
+                              </div>
+                          )}
+                      </div>
+
+                      {/* Phân trang */}
+                      {/* Pagination */}
+
+                    {filteredTopics.length > pageSize && (
+                      <div className="flex justify-center items-center space-x-2 flex-shrink-0 p-6 border-t-1 border-gray-200 bg-gray-50/50">
+                        <Pagination
+                          total={Math.ceil(filteredTopics.length / pageSize)}
+                          value={activePage}
+                          onChange={setActivePage}
+                          color="#0367B0"
+                        />
+                      </div>
+                    )}
+                  </div>
               </div>
-            )}
-          </div>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Create Contest
-          </button>
-        </form>
+              {/* Nút tạo bài kiểm tra */}
+              <div className="mt-8 flex justify-end lg:fixed lg:bottom-8 lg:left-60 lg:mt-0">
+                  <button type="submit" className="bg-[#0367B0] text-white font-bold py-3 px-8 rounded-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
+                      Tạo bài kiểm tra
+                  </button>
+              </div>
+          </form>
+      </div>
       </main>
     </div>
   );

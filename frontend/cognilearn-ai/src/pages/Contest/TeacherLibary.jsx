@@ -47,7 +47,7 @@ const TeacherLibrary = ({userInfo}) => {
         </div>
 
         <div className="p-5 bg-white shadow rounded-2xl mb-6 text-[#112D4E]">
-          <Title order={4}>Bài kiểm tra gần đây</Title>
+          <Title order={4}>Bài kiểm tra mới nhất</Title>
           <div className="grid grid-cols-5 gap-4 mt-3">
             {latestContests.length > 0 ? (
               latestContests.map((contest) => (
