@@ -20,6 +20,7 @@ import Notifications from './pages/Home/Notifications';
 import CogniChat from './pages/Interview/CogniChat';
 import TeacherLibrary from './pages/Contest/TeacherLibary';
 import Standing from './pages/Contest/Standing';
+import LoaderPage from './components/Loader/LoaderPage';
 
 const App = () => {
   const [userInfo, SetUserInfo] = useState(null);
@@ -93,10 +94,11 @@ const fetchProfile = useCallback(async () => {
     };
   }, []);
   return (
-    <div>
+    <div lexend>
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage/>}/>
+          <Route path="/loader" element={<LoaderPage />} />
           <Route path="/landing" element={<LandingPage/>}/>
           <Route path="/cogni-chat/:sessionId" element={<CogniChat userInfo={userInfo}/>}/>        
           <Route path="/login" element={<Login fetchProfile = {fetchProfile}/>}/>

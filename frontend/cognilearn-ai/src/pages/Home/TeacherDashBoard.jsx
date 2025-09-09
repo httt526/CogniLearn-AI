@@ -121,7 +121,7 @@ const TeacherDashBoard = ({ userInfo }) => {
 
   return (
     <>
-      <div className="flex h-fit bg-gray-50">
+      <div className="flex h-fit bg-gray-50 lexend">
         {/* NAVBAR */}
         <nav>
           <Navbar />
@@ -212,7 +212,7 @@ const TeacherDashBoard = ({ userInfo }) => {
               </div>
 
               {/* Bar Chart */}
-              <div className="bg-white rounded-xl shadow p-4 w-full h-[400px]">
+              <div className="bg-white rounded-xl text-[12px] shadow p-4 w-full h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={barChartData}>
                     <CartesianGrid strokeDasharray="3 3" />

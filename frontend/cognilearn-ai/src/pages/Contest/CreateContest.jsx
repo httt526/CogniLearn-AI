@@ -112,8 +112,7 @@ const CreateContest = ({userInfo}) => {
             author: userInfo,
             numberPerTopic: numberPerTopic // Gửi thêm số lượng câu hỏi
         });
-        alert("Contest created successfully!");
-        navigate("/");
+        navigate("/loader");
     } catch (error) {
         console.error("Error creating contest:", error);
         alert("Failed to create contest!");
@@ -138,7 +137,7 @@ const CreateContest = ({userInfo}) => {
               <div className="w-24 h-1 bg-[#0367B0] mt-2 rounded-full"></div>
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <form>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                   {/* Cột thông tin bên trái */}
                   <div className="lg:col-span-1 bg-white rounded-xl shadow-lg h-fit overflow-hidden border border-gray-200">
@@ -233,7 +232,7 @@ const CreateContest = ({userInfo}) => {
 
               {/* Nút tạo bài kiểm tra */}
               <div className="mt-8 flex justify-end lg:fixed lg:bottom-8 lg:left-60 lg:mt-0">
-                  <button type="submit" className="bg-[#0367B0] text-white font-bold py-3 px-8 rounded-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
+                  <button onClick={handleSubmit} type="submit" className="bg-[#0367B0] cursor-pointer text-white font-bold py-3 px-8 rounded-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
                       Tạo bài kiểm tra
                   </button>
               </div>
