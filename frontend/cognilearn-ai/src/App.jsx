@@ -12,13 +12,13 @@ import CreateContest from './pages/Contest/CreateContest';
 import ContestResult from './pages/Contest/ContestResult';
 import PrivateRoute from './components/PrivateRoute';
 import axiosInstance from './utils/axiosInsantce';
-import Libary from './pages/Contest/Libary';
+import Library from './pages/Contest/Library';
 import TeacherDashboard from './pages/Home/TeacherDashBoard';
 import UserProfile from './pages/Account/UserProfile';
 import Setting from './pages/Setting/Setting';
 import Notifications from './pages/Home/Notifications';
 import CogniChat from './pages/Interview/CogniChat';
-import TeacherLibrary from './pages/Contest/TeacherLibary';
+import TeacherLibrary from './pages/Contest/TeacherLibrary';
 import Standing from './pages/Contest/Standing';
 import LoaderPage from './components/Loader/LoaderPage';
 import Orientation from './pages/Interview/Orientation';
@@ -124,7 +124,7 @@ const fetchProfile = useCallback(async () => {
             path="/library"
             element={
             <PrivateRoute>
-              {userInfo?.role ===  "student" ? (<Libary userInfo={userInfo}/>) : (<TeacherLibrary userInfo={userInfo}/>)}
+              {userInfo?.role ===  "student" ? (<Library userInfo={userInfo}/>) : (<TeacherLibrary userInfo={userInfo}/>)}
             </PrivateRoute>
           } />
 

@@ -47,7 +47,7 @@ export default function Navbar() {
 
   const mockdata = [
     { icon: IconHome2, label: 'Trang chủ', path: '/dashboard' },
-    { icon: IconLibrary, label: 'Thư viện', path: '/libary' },
+    { icon: IconLibrary, label: 'Thư viện', path: '/library' },
     { icon: IconUser, label: 'Tài khoản', path: '/profile' },
     { icon: IconNotification, label: 'Thông Báo', onClick: handleNotification },
     { icon: IconSettings, label: 'Thiết lập', path: '/settings' },
