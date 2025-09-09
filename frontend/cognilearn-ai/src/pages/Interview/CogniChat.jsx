@@ -54,7 +54,7 @@ export default function ChatPage({userInfo}) {
   const createSession = async () => {
     try {
       const res = await axiosInstance.post(`/sessions/${userId}`);
-      const newSession = await res.json();
+      const newSession = res.data;   // lấy data từ axios
       setSessions((prev) => [newSession, ...prev]);
       navigate(`/cogni-chat/${newSession.id}`);
     } catch (err) {
