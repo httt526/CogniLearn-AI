@@ -5,10 +5,13 @@ import { HiOutlineUserGroup } from 'react-icons/hi2';
 import { TbShieldCheck } from 'react-icons/tb';
 import landing from '../../assets/landing.png';
 import landing2 from '../../assets/landing2.png';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 // --- CÁC COMPONENT TÁI SỬ DỤNG ---
 
-const SolutionCard = ({ title, description, buttonText }) => (
+const SolutionCard = ({ title, description, buttonText }) => {
+  const navigate = useNavigate();  
+  return (
     <div className="relative group">
         {/* Lớp nền xanh đóng vai trò là bóng/viền, dịch sang phải và xuống dưới */}
         <div className="absolute top-0 left-0 w-full h-full bg-[#0367B0] rounded-2xl transform translate-x-2 translate-y-2 transition-transform duration-300 ease-in-out group-hover:translate-x-1 group-hover:translate-y-1"></div>
@@ -18,13 +21,16 @@ const SolutionCard = ({ title, description, buttonText }) => (
             <h3 className="text-lg font-bold text-[#112D4E] mb-3 text-left">{title}</h3>
             <p className="text-gray-600 text-[15px] mb-5 flex-grow text-left">{description}</p>
             <div className="mt-auto text-center">
-                <button className="bg-[#0367B0] text-white font-semibold py-2 px-6 rounded-full hover:bg-opacity-90 transition-colors duration-300 hover:scale-105 cursor-pointer">
+                <button className="bg-[#0367B0] text-white font-semibold py-2 px-6 rounded-full hover:bg-opacity-90 transition-colors duration-300 hover:scale-105 cursor-pointer"
+                  onClick={() => navigate("/dashboard")}
+                >
                 {buttonText}
                 </button>
             </div>
         </div>
     </div>
-);
+    )
+};
 
 const BenefitItem = ({ icon, text }) => (
     <div className="text-center flex flex-col items-center p-4">
@@ -36,21 +42,28 @@ const BenefitItem = ({ icon, text }) => (
 
 // --- CÁC PHẦN CỦA TRANG (SECTIONS) ---
 
-const Header = () => (
+const Header = () => {
+  const navigate = useNavigate();
+  return (
   <header className="absolute top-4 left-0 right-5 z-20 py-5 px-4 sm:px-8">
     <div className="container mx-auto flex justify-between items-center">
       <div> {/* Empty div for spacing */} </div>
       <div className="flex items-center space-x-4">
-        <a href="#" className="text-gray-700 hover:text-[#0367B0]">Đã có tài khoản? Đăng nhập</a>
-        <button className="bg-[#0367B0] text-white font-semibold py-2 cursor-pointer px-5 rounded-lg hover:bg-opacity-90 transition-colors duration-300 transform hover:scale-105">
+        <button href="" className="text-gray-700 hover:text-[#0367B0] cursor-pointer" onClick={() => navigate("/login")}>Đã có tài khoản? Đăng nhập</button>
+        <button className="bg-[#0367B0] text-white font-semibold py-2 cursor-pointer px-5 rounded-lg hover:bg-opacity-90 transition-colors duration-300 transform hover:scale-105"
+          onClick={() => navigate("/signup")}
+        >
           ĐĂNG KÍ
         </button>
       </div>
     </div>
   </header>
-);
+  )
+};
 
-const HeroSection = () => (
+const HeroSection = () => {
+  const navigate = useNavigate();
+  return (
   <section className="relative bg-[#FBFBFB] pt-32 pb-20 overflow-hidden min-h-[930px] flex items-center justify-center">
     <div className="absolute top-[-300px] left-0 w-full h-full" style={{ backgroundImage: `url(${landing})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}></div>
     <div className="container mx-auto top-[-150px] text-center relative z-10">
@@ -60,12 +73,15 @@ const HeroSection = () => (
       <p className="text-lg text-[#112D4E] mt-4 mb-8">
         Hiểu tư duy, mở khóa tương lai
       </p>
-      <button className="bg-[#112D4E] cursor-pointer text-white font-bold py-3 px-8 rounded-lg text-base hover:bg-opacity-90 transition-colors duration-300 transform hover:scale-105">
+      <button className="bg-[#112D4E] cursor-pointer text-white font-bold py-3 px-8 rounded-lg text-base hover:bg-opacity-90 transition-colors duration-300 transform hover:scale-105"
+        onClick={() => navigate("/dashboard")}
+      >
         TÌM HIỂU NGAY
       </button>
     </div>
   </section>
-);
+  )
+};
 
 const PersonalizationSection = () => (
   <section className="relative py-20 top-[-120px] bg-cover bg-center bg-[#112D4E] flex items-center min-h-[300px]" >
@@ -145,18 +161,23 @@ const HowItWorksSection = () => (
     </section>
 );
 
-const CTASection = () => (
+const CTASection = () => {
+  const navigate = useNavigate();
+  return(
     <section className="bg-[#FBFBFB] py-20 z-20">
         <div className="container  mx-auto text-center px-4 min-h-[350px] flex flex-col justify-center items-center">
             <h2 className="text-2xl md:text-2xl font-semibold text-[#112D4E] max-w-3xl mx-auto leading-snug">
                 Sẵn sàng khám phá bản đồ tư duy của chính mình? <br/> Hãy để CogniLearn AI đồng hành cùng bạn trên hành trình học tập và sự nghiệp.
             </h2>
-            <button className="mt-8 bg-[#0367B0] z-30 cursor-pointer text-white font-bold py-3 px-8 rounded-lg text-base hover:bg-opacity-90 transition-colors duration-300 transform hover:scale-105">
+            <button className="mt-8 bg-[#0367B0] z-30 cursor-pointer text-white font-bold py-3 px-8 rounded-lg text-base hover:bg-opacity-90 transition-colors duration-300 transform hover:scale-105"
+            onClick={() => navigate("/dashboard")}
+            >
                 BẮT ĐẦU MIỄN PHÍ NGAY BÂY GIỜ
             </button>
         </div>
     </section>
-);
+  )
+};
 
 const Footer = () => (
     <footer className=" text-[#112D4E] relative bg-[#FBFBFB] min-h-[600px]">
@@ -198,6 +219,7 @@ const Footer = () => (
 
 // --- COMPONENT CHÍNH CỦA TRANG ---
 function App() {
+  const navigate = useNavigate();
   return (
     <div className="bg-white lexend">
       <Header />

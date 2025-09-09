@@ -97,12 +97,13 @@ const fetchProfile = useCallback(async () => {
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage/>}/>
+          <Route path="/landing" element={<LandingPage/>}/>
           <Route path="/cogni-chat" element={<CogniChat/>}/>        
           <Route path="/login" element={<Login fetchProfile = {fetchProfile}/>}/>
           <Route path="/signup" element={<Signup fetchProfile = {fetchProfile}/>}/>
           <Route path="/contest/:id" element={<PrivateRoute><Contest userInfo = {userInfo}/></PrivateRoute>}/>
           {userInfo?.role === "teacher" && <Route path="/create-contest" element={<PrivateRoute><CreateContest userInfo={userInfo}/></PrivateRoute>}/>}
-          {userInfo?.role === "teacher" && <Route path="/standing/:contestId" element={<PrivateRoute><Standing userInfo={userInfo}/></PrivateRoute>}/>}
+          {userInfo?.role === "teacher" && <Route path="/standing/:contestId/:name" element={<PrivateRoute><Standing /></PrivateRoute>}/>}
           <Route path="/contest-result/:id" element={<PrivateRoute><ContestResult/></PrivateRoute>}/>
           <Route path="/settings" element={<PrivateRoute><Setting userInfo={userInfo}/></PrivateRoute>}/>
           <Route path="/notifications" element={<PrivateRoute><Notifications userInfo={userInfo}/></PrivateRoute>}/>

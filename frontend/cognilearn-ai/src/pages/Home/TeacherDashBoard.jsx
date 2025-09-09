@@ -175,7 +175,7 @@ const TeacherDashBoard = ({ userInfo }) => {
                             <Table.Tr key={contest.id}>
                               <Table.Td
                                 className="cursor-pointer text-[#112D4E] hover:underline"
-                                onClick={() => navigate(`/standing/${contest.id}`)}
+                                onClick={() => navigate(`/standing/${contest.id}/${contest.name}`)}
                               >
                                 {contest.name}
                               </Table.Td>
@@ -184,7 +184,7 @@ const TeacherDashBoard = ({ userInfo }) => {
                                   size="xs"
                                   variant="light"
                                   color="indigo"
-                                  onClick={() => navigate(`/standing/${contest.id}`)}
+                                  onClick={() => navigate(`/standing/${contest.id}/${contest.name}`)}
                                 >
                                   Xếp hạng
                                 </Button>

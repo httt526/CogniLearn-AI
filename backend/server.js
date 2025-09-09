@@ -194,7 +194,8 @@ app.get("/get-contest-result/:contestId", async (req, res) => {
         point,
         analysis_report,
         created_at,
-        name 
+        name, 
+        userName  
       `)
       .eq("contestId", contestId)
       .order("point", { ascending: false });
@@ -209,6 +210,7 @@ app.get("/get-contest-result/:contestId", async (req, res) => {
       point: item.point,
       analysis_report: item.analysis_report,
       created_at: item.created_at,
+      userName: item.userName
     }));
 
     res.json(results);

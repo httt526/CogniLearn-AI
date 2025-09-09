@@ -138,6 +138,7 @@ const Contest = ({ userInfo }) => {
       name: contest.name,
       point: (points / contest.questions.length) * 10,
       userId,
+      userName: userInfo.name,
       questions: contest.questions.map((q) => {
         const { vector, ...qWithoutVector } = q;
         return {
