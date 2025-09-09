@@ -605,6 +605,118 @@ app.get("/search-topics", async (req, res) => {
   }
 });
 
+//Tạo session mới
+app.post("/sessions/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const { data, error } = await supabase
+      .from("chat_sessions")
+      .insert([{ user_id: userId }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Lấy danh sách session của 1 user
+app.get("/sessions/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const { data, error } = await supabase
+      .from("chat_sessions")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Lấy session mới nhất
+app.get("/sessions/last/:userId", async (req, res) => {
+  const { userId } = req.params;
+  if (!userId) return res.status(400).json({ error: "Missing userId" });
+
+  const { data, error } = await supabase
+    .from("chat_sessions")
+    .select("*")
+    .eq("user_id", userId)
+    .order("updated_at", { ascending: false })
+    .limit(1);
+
+  if (error) return res.status(500).json({ error: error.message });
+
+  res.json(data[0] || {}); 
+});
+
+// Lưu tin nhắn vào session
+app.post("/sessions/:sessionId/messages", async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const { sender, content } = req.body;
+
+    const { data, error } = await supabase
+      .from("chat_messages")
+      .insert([{ session_id: sessionId, sender, content }])
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    if (sender === "user") {
+    const { data: existingMsgs } = await supabase
+      .from("chat_messages ")
+      .select("id")
+      .eq("session_id", sessionId);
+
+    if (existingMsgs.length === 1) {
+      // tức là đây là message đầu tiên
+      await supabase
+        .from("chat_sessions")
+        .update({ title: content.slice(0, 50) }) // lấy 50 ký tự đầu làm title
+        .eq("id", sessionId);
+    }
+  }
+
+    // update updated_at cho session
+    await supabase
+      .from("chat_sessions")
+      .update({ updated_at: new Date() })
+      .eq("id", sessionId);
+
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Lấy tin nhắn của 1 session
+app.get("/sessions/:sessionId/messages", async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+
+    const { data, error } = await supabase
+      .from("chat_messages")
+      .select("*")
+      .eq("session_id", sessionId)
+      .order("created_at", { ascending: true });
+
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Serve uploads folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads"), {}));
 // Start Server
