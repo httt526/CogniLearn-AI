@@ -185,7 +185,7 @@ const Dashboard = ({ userInfo }) => {
               </div>
 
               {/* Bar Chart */}
-              <div className="bg-white rounded-xl shadow p-4 w-full h-[400px]">
+              <div className="bg-white text-[12px] rounded-xl shadow p-4 w-full h-[400px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={barChartData}>
                     <CartesianGrid strokeDasharray="3 3" />
