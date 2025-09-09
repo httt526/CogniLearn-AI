@@ -155,7 +155,7 @@ const TeacherDashBoard = ({ userInfo }) => {
             <div className="flex flex-col gap-6 w-full">
               {/* Radar + Line side by side */}
               <div className="bg-white rounded-xl shadow p-4 w-full h-[400px]">
-                <div className="grid grid-cols-2 gap-4 w-full h-full">
+                <div className="grid gap-4 w-full h-full">
                  <div className="p-5 bg-white shadow rounded-2xl text-[#112D4E]">
                     <Title order={4}>Lịch sử làm bài</Title>
                     {paginatedContests.length > 0 ? (
