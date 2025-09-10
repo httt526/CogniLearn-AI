@@ -6,6 +6,8 @@ import Markdown from "react-markdown";
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import { IconHttpDelete } from "@tabler/icons-react";
+import axios from "axios";
 
 const API_BASE = "http://localhost:8000"; // đổi thành API backend của bạn
 
@@ -122,8 +124,41 @@ export default function ChatPage({userInfo}) {
     }
   };
 
+  const handleDeleteSession = async (id) => {
+    try{
+      const res = await axiosInstance.delete(`/session/${id}`);
+      console.log("xóa session thành công");
+      try {
+        const res = await axiosInstance.get(`/sessions/last/${userInfo.id}`)
+
+        if (res.data?.id) {
+    
+          navigate(`/cogni-chat/${res.data.id}`);
+          const fetchSessions = async () => {
+          try {
+            const res = await fetch(`${API_BASE}/sessions/${userId}`);
+            const data = await res.json();
+            setSessions(Array.isArray(data) ? data : []); // đảm bảo luôn là array
+          } catch (err) {
+            console.error("Fetch sessions error:", err);
+          }
+        };
+          fetchSessions();
+        } else {
+          
+          const newRes = await axiosInstance.post(`/sessions/${userInfo.id}`);
+          navigate(`/cogni-chat/${newRes.data.id}`);
+        }
+      } catch (err) {
+        console.error("Không lấy được session:", err);
+      }
+    }catch(error){
+      console.log(error);
+    }
+  }
+
   return (
-    <div className="flex h-screen lexend">
+    <div className="flex h-screen">
       <Navbar />
 
       {/* Sidebar sessions */}
@@ -148,6 +183,7 @@ export default function ChatPage({userInfo}) {
                 }`}
               >
                 {s.title || "New Chat"}
+                <IconHttpDelete onClick={() => handleDeleteSession(s.id)} />
               </div>
             ))}
         </div>

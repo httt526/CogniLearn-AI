@@ -95,7 +95,7 @@ const fetchProfile = useCallback(async () => {
     };
   }, []);
   return (
-    <div flex h-screen lexend>
+    <div >
       <Router>
         <Routes>
           <Route path="/" element={<LandingPage/>}/>

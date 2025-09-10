@@ -312,8 +312,8 @@ app.delete("/session/:sessionId", async(req, res) => {
     .delete()
     .eq("sessionId", sessionId);
 
+    res.status(200).json("delete succesful");
     if(err) throw err;
-
   }catch(error){
     res.status(500).json({err : error.message});
   }
