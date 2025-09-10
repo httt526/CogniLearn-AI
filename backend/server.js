@@ -297,6 +297,29 @@ app.delete("/contest-progress/:id", async (req, res) => {
   }
 });
 
+app.delete("/session/:sessionId", async(req, res) => {
+  const { sessionId } = req.params;
+
+  try{
+    const {error} = await supabase
+    .from("chat_sessions")
+    .delete()
+    .eq("id", sessionId);
+    if(error) throw error;
+
+    const { err } = await supabase
+    .from("chat_messages")
+    .delete()
+    .eq("sessionId", sessionId);
+
+    if(err) throw err;
+
+  }catch(error){
+    res.status(500).json({err : error.message});
+  }
+  
+})
+
 app.post("/contest-result/:id", async (req, res) => {
   try {
     const { id } = req.params; 
